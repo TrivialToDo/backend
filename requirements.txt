@@ -1,2 +1,4 @@
 django~=4.2.6
 flake8~=6.1.0
+
+uwsgi
