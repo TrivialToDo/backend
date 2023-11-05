@@ -1,6 +1,7 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 
+from utils.utils_request import request_success
 from .models import Event
 
 
@@ -17,9 +18,6 @@ def get_event(request, hash: str):
                 "msg": "event not found"
             }
         }, status=404)
-    return JsonResponse({
-        "code": 200,
-        "data": {
-            "event": res.serialize()
-        }
+    return request_success({
+        "event": res.serialize()
     })

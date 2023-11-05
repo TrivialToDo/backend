@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from event.models import Event
+from utils.utils_request import request_success
 
 
 # Create your views here.
@@ -37,11 +38,8 @@ def get_day(request, _date: str):
         return err
 
     r = get_day_event(_date)
-    return JsonResponse({
-        "code": 200,
-        "data": {
-            "list": [i.serialize() for i in r]
-        }
+    return request_success({
+        "list": [i.serialize() for i in r]
     })
 
 
@@ -55,11 +53,8 @@ def get_week(request, _date: str):
     for _ in range(7):
         r.append([i.serialize() for i in get_day_event(_date)])
         _date = _date + timedelta(days=1)
-    return JsonResponse({
-        "code": 200,
-        "data": {
-            "list": r
-        }
+    return request_success({
+        "list": r
     })
 
 
@@ -75,9 +70,6 @@ def get_month(request, _date: str):
         _date = _date + timedelta(days=1)
         if _date.day == 1:
             break
-    return JsonResponse({
-        "code": 200,
-        "data": {
-            "list": r
-        }
+    return request_success({
+        "list": r
     })

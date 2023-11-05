@@ -15,8 +15,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.urls import path, include
+from django.middleware.csrf import get_token
+
+from utils.utils_request import request_success
 
 urlpatterns = [
+    path('token', lambda req: request_success({"token": get_token(req)})),
     path('schedule/', include('schedule.urls')),
     path('event/', include('event.urls')),
+    path('wechat/', include('wechat.urls')),
 ]
