@@ -25,13 +25,18 @@ SECRET_KEY = 'django-insecure-b3h0)hqduvaza1_=pk00u2nu6@s$%sbettaey=4po+ohl0x%*j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False if os.getenv('DEPLOY') else True
 
-ALLOWED_HOSTS = ['backend']
+ALLOWED_HOSTS = [
+    'backend',
+    'localhost',
+    '127.0.0.1'
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
     'event',
+    'user',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

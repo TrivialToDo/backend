@@ -14,3 +14,7 @@ class EventTestCase(TestCase):
         resp = self.client.get(f'/event/{self.e1.hash}')
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(resp.json()['data']['event']['hash'], self.e1.hash)
+
+    def test_del_event(self):
+        resp = self.client.delete(f'/event/{self.e1.hash}')
+        self.assertEqual(resp.status_code, 200)

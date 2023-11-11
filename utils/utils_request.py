@@ -8,3 +8,12 @@ def request_success(data=None):
         "code": 200,
         "data": data
     })
+
+
+def request_fail(code: int, msg: str):
+    return JsonResponse({
+        "code": code,
+        "data": {
+            "msg": msg
+        }
+    }, status=code)

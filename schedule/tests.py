@@ -13,7 +13,7 @@ class ScheduleTestCase(TestCase):
     def test_get_day(self):
         resp = self.client.get('/schedule/day/2020-01-17')
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(len(resp.json()['data']['list']), 2)
+        self.assertEqual(len(resp.json()['data']['list'][0]), 2)
 
     def test_get_week(self):
         resp = self.client.get('/schedule/week/2020-01-17')
