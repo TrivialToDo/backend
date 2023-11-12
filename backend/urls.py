@@ -18,10 +18,12 @@ from django.urls import path, include
 from django.middleware.csrf import get_token
 
 from utils.utils_request import request_success
+from user.views import login
 
 urlpatterns = [
     path('token', lambda req: request_success({"token": get_token(req)})),
     path('schedule/', include('schedule.urls')),
     path('event/', include('event.urls')),
     path('wechat/', include('wechat.urls')),
+    path('login', login),
 ]
