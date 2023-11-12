@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from wechat.utils import send_message
 from user.models import User
-from schedule_agent import ScheduleAgent
+from .schedule_agent import ScheduleAgent
 
 
 # Create your views here.

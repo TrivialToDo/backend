@@ -1,10 +1,10 @@
 import json
-from base_agent import BaseAgent
-from add_event_agent import AddEventAgent
+from .base_agent import BaseAgent
+from .add_event_agent import AddEventAgent
 from typing import Tuple
 import logging
 from user.models import User
-from models import Conversation
+from .models import Conversation
 
 
 class ScheduleAgent(BaseAgent):

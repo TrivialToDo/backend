@@ -1,11 +1,11 @@
 import json
-from base_agent import BaseAgent
+from .base_agent import BaseAgent
 from typing import Dict, Any, List, Tuple
 import logging
 import csv
-from models import Conversation
+from .models import Conversation
 from datetime import datetime
-from memory_manager import MemoryManager
+from .memory_manager import MemoryManager
 from user.models import User
 from event.models import Event
 from wechat.utils import send_message
