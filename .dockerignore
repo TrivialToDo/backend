@@ -1,3 +1,4 @@
 database
 .idea
 .DS_Store
+config/config.json.example
