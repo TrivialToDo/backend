@@ -1,11 +1,5 @@
 #!/bin/sh
-OPENAI_API_KEY=$(jq -r '.openai_apikey' config/config.json)
-if [ -z "$OPENAI_API_KEY" ]; then
-    echo "OPENAI_API_KEY is not set"
-    exit 1
-fi
-export OPENAI_API_KEY=$OPENAI_API_KEY
-
+sh config/config.sh
 
 python3 manage.py migrate
 

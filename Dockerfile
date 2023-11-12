@@ -6,10 +6,7 @@ WORKDIR /opt/tmp
 
 COPY . .
 
-RUN apt-get update && \
-    apt-get install -y jq && \
-    rm -rf /var/lib/apt/lists/* && \
-    pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 EXPOSE 6666
 

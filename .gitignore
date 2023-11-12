@@ -109,8 +109,6 @@ GitHub.sublime-settings
 
 .DS_Store
 
-config/config.json
-
 db.sqlite3
 
 agent/memory/*
