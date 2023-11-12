@@ -41,21 +41,22 @@ class BaseAgent:
             return ""
 
     async def handle_ai_response(
-        self, response: Dict[str, str]
+        self, response
     ) -> Tuple[List[Dict[str, str]], bool, bool]:
-        if response.get("content"):
-            logging.info(f"💬 {self.__str__()}: " + response["content"].replace("\n", ""))
+        content = response.content
+        if content:
+            logging.info(f"💬 {self.__str__()}: " + content.replace("\n", ""))
 
         messages = []
         tool_calls = response.tool_calls
-        ask_content = ""
         end, need_save = False, False
         if tool_calls:
             for tool_call in tool_calls:
+                tool_id = tool_call.id
                 message = {}
                 function_name = tool_call.function.name
-                message["role"] = "function"
-                message["name"] = function_name
+                message["role"] = "tool"
+                message["tool_call_id"] = tool_id
                 try:
                     function_to_call = self.available_function[function_name]
                 except KeyError as _:

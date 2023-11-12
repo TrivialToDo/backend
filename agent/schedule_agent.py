@@ -5,6 +5,8 @@ from typing import Tuple
 import logging
 from user.models import User
 from .models import Conversation
+from asgiref.sync import sync_to_async
+import pickle
 
 
 class ScheduleAgent(BaseAgent):
@@ -61,12 +63,20 @@ class ScheduleAgent(BaseAgent):
         )
 
     async def recall_previous_conversation(self, user_input: str) -> Tuple[str, bool, bool]:
-        conversation = Conversation.objects.filter(wechat_id=self.user.wechat_id).first()
+        logging.info(
+            f"🔧 {self.__str__()} Function Calling: recall_previous_conversation({user_input})"
+        )
+        conversation = await sync_to_async(
+            (await sync_to_async(
+                Conversation.objects.filter
+            )(wechat_id=self.user.wechat_id)).first
+        )()
         if not conversation:
             return "No previous conversation", False, False
         if conversation.type == "add_event":
             planning_agent = AddEventAgent(self.user)
-            return await planning_agent(user_input, json.loads(conversation.messages)), True, False
+            
+            return await planning_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
         else:
             logging.error(f"😱 {self.__str__()} Unknown conversation type: {conversation.type}")
             return "Hello World! Welcome to contact with us by email: lkm20@mails.tsinghua.edu.cn", True, False
@@ -85,11 +95,11 @@ class ScheduleAgent(BaseAgent):
         ]
         while True:
             response = await self.chat_completion(messages, self.functions)
-            message, end, need_save = await self.handle_ai_response(response)
+            message, end, _ = await self.handle_ai_response(response)
             messages.append(response)
             messages.extend(message)
             if end:
-                return message[0]["content"]
+                return message[-1]["content"]
 
     def __str__(self) -> str:
         return "ScheduleAgent"

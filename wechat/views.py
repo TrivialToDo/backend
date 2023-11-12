@@ -5,7 +5,7 @@ from django.views.decorators.http import require_http_methods
 from utils.utils_request import request_success
 from agent.views import agent_main
 from user.models import User
-import secrets
+import asyncio
 
 
 # Create your views here.
@@ -23,8 +23,9 @@ def recv_msg(req):
     if user is None:
         user = User.objects.create(wechat_id=wechat_id, nickname=nickname)
 
-    agent_main(body['content'], user)
+    message = asyncio.run(agent_main(body['content'], user))
 
     return request_success({
-        "type": "no_reply"
+        "type" : "text",
+        "content" : message
     })

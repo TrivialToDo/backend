@@ -8,7 +8,8 @@ from datetime import datetime
 from .memory_manager import MemoryManager
 from user.models import User
 from event.models import Event
-from wechat.utils import send_message
+from asgiref.sync import sync_to_async
+import pickle
 
 
 class AddEventAgent(BaseAgent):
@@ -41,8 +42,7 @@ class AddEventAgent(BaseAgent):
 
     async def send_message(self, question: str) -> Tuple[str, bool, bool]:
         logging.info(f"🔧 {self.__str__()} Function Calling: send_message({question})")
-        send_message(self.user, _type="text", content=question)
-        return f"Question: {question}\nAnswer: Waiting", True, True
+        return question, True, True
 
     async def add_event_to_schedule(
         self,
@@ -56,7 +56,7 @@ class AddEventAgent(BaseAgent):
             f"🔧 {self.__str__()} Function Calling: add_event_to_schedule("
             + f"{event}, {start_time}, {end_time}, {whether_need_remind}, {remind_time_relative_to_start_time})"
         )
-        Event.create_event(
+        await sync_to_async(Event.create_event)(
             user=self.user,
             time_start={
                 "hour": int(start_time[11:13]),
@@ -101,24 +101,29 @@ class AddEventAgent(BaseAgent):
             ]
         else:
             messages = past_messages
-            messages.append(
-                {"role": "function", "name": "send_message", "content": user_input}
-            )
+            messages[-1]["content"] = user_input
         while True:
             response = await self.chat_completion(messages, self.functions)
             message, end, need_save = await self.handle_ai_response(response)
             messages.append(response)
             messages.extend(message)
-            if need_save:
-                Conversation.objects.filter(wechat_id=self.user.wechat_id).delete()
-                new_conversation = Conversation(
-                    wechat_id=self.user.wechat_id,
-                    messages=json.dumps(messages, ensure_ascii=False),
-                    type="add_event",
-                )
-                new_conversation.save()
             if end:
-                return message[0]["content"]
+                past_conversation = await sync_to_async(Conversation.objects.filter)(
+                    wechat_id=self.user.wechat_id
+                )
+                if await sync_to_async(past_conversation.exists)():
+                    await sync_to_async(past_conversation.delete)()
+                if need_save:
+                    logging.info(f"📝 {self.__str__()} Saving conversation...")
+                    binary_messages = await sync_to_async(pickle.dumps)(messages)
+                    new_conversation = await sync_to_async(Conversation.objects.create)(
+                        wechat_id=self.user.wechat_id,
+                        messages=binary_messages,
+                        type="add_event",
+                    )
+                    await sync_to_async(new_conversation.save)()
+                    logging.info(f"✅ 📝 {self.__str__()} Saved conversation.")
+                return message[-1]["content"]
 
     def __str__(self) -> str:
         return "AddEventAgent"

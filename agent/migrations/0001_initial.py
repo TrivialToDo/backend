@@ -12,13 +12,12 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='User',
+            name='Conversation',
             fields=[
                 ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('wechat_id', models.CharField(max_length=100, unique=True)),
-                ('nickname', models.CharField(max_length=100)),
-                ('temp_token', models.CharField(max_length=100, null=True, unique=True)),
-                ('temp_token_expires', models.DateTimeField(null=True)),
+                ('wechat_id', models.CharField(db_index=True, max_length=100, unique=True)),
+                ('messages', models.BinaryField()),
+                ('type', models.CharField(max_length=100)),
             ],
         ),
     ]

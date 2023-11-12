@@ -38,7 +38,7 @@ class MemoryManager:
             response = openai.embeddings.create(
                 input=text.replace("\n", ""),
                 model=model,
-            )["data"][0]["embedding"]
+            ).data[0].embedding
             return response
         except Exception as e:
             logging.error(f"❌ 🧠 {self.__str__()} Embedding error: {e}")

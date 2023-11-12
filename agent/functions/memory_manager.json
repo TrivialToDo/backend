@@ -1,56 +1,68 @@
 [
     {
-        "name": "retrieve_user_behavioral_tendency",
-        "description": "Retrieve user behavioral tendency",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Retrieve query"
+        "type": "function",
+        "function": {
+            "name": "retrieve_user_behavioral_tendency",
+            "description": "Retrieve user behavioral tendency",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {
+                        "type": "string",
+                        "description": "Retrieve query"
+                    }
                 }
             }
         }
     },
     {
-        "name": "add_record_to_memory",
-        "description": "Add record about user behavioral tendency in memory",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "text": {
-                    "type": "string",
-                    "description": "Text of record"
+        "type": "function",
+        "function": {
+            "name": "add_record_to_memory",
+            "description": "Add record about user behavioral tendency in memory",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "Text of record"
+                    }
                 }
             }
         }
     },
     {
-        "name": "remove_record_in_memory",
-        "description": "Remove record about user behavioral tendency in memory",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "text": {
-                    "type": "string",
-                    "description": "Text of record"
+        "type": "function",
+        "function": {
+            "name": "remove_record_in_memory",
+            "description": "Remove record about user behavioral tendency in memory",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "Text of record"
+                    }
                 }
             }
         }
     },
     {
-        "name": "update_record_in_memory",
-        "description": "Update record about user behavioral tendency in memory",
-        "parameters": {
-            "type": "object",
-            "properties": {
-                "text": {
-                    "type": "string",
-                    "description": "Text of record"
-                },
-                "new_text": {
-                    "type": "string",
-                    "description": "New text of record"
+        "type": "function",
+        "function": {
+            "name": "update_record_in_memory",
+            "description": "Update record about user behavioral tendency in memory",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "text": {
+                        "type": "string",
+                        "description": "Text of record"
+                    },
+                    "new_text": {
+                        "type": "string",
+                        "description": "New text of record"
+                    }
                 }
             }
         }
