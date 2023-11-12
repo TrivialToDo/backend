@@ -1,0 +1,67 @@
+[
+    {
+        "name": "call_add_event_agent",
+        "description": "Call the AddEventAgent to add a new event into user's schedule.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_input": {
+                    "type": "string",
+                    "description": "The user input for the plan schedule."
+                }
+            }
+        }
+    },
+    {
+        "name": "call_remove_event_agent",
+        "description": "Call the RemoveEventAgent to remove an event from user's schedule.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_input": {
+                    "type": "string",
+                    "description": "The user input for the remove schedule."
+                }
+            }
+        }
+    },
+    {
+        "name": "call_modify_event_agent",
+        "description": "Call the ModifyEventAgent to modify an event from user's schedule.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_input": {
+                    "type": "string",
+                    "description": "The user input for the modify schedule."
+                }
+            }
+        }
+    },
+    {
+        "name": "call_chat_agent",
+        "description": "Call the ChatAgent to chat with a user.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_input": {
+                    "type": "string",
+                    "description": "The user input for the chat."
+                }
+            }
+        }
+    },
+    {
+        "name": "recall_previous_conversation",
+        "description": "Recall the previous conversation.",
+        "parameters": {
+            "type": "object",
+            "properties": {
+                "user_input": {
+                    "type": "string",
+                    "description": "The user input for the recall."
+                }
+            }
+        }
+    }
+]
