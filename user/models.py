@@ -18,6 +18,8 @@ class User(models.Model):
     temp_token = models.CharField(max_length=100, unique=True, null=True)
     temp_token_expires = models.DateTimeField(null=True)
 
+    agent_deal = models.BooleanField(default=False)
+
     def serialize(self):
         return {
             'id': self.id,

@@ -22,8 +22,18 @@ def recv_msg(req):
     user = User.objects.filter(wechat_id=wechat_id).first()
     if user is None:
         user = User.objects.create(wechat_id=wechat_id, nickname=nickname)
+    if user.agent_deal == True:
+        return request_success({
+            "type": "text",
+            "content": "get off!"
+        })
+    user.agent_deal = True
+    user.save()
 
     agent_main(body['content'], user)
+
+    user.agent_deal = False
+    user.save()
 
     return request_success({
         "type": "no_reply"
