@@ -6,7 +6,9 @@ uwsgi --module=backend.wsgi:application \
      --env DJANGO_SETTINGS_MODULE=backend.settings \
      --master \
      --http=0.0.0.0:80 \
-     --processes=5 \
+     --processes=4 \
      --harakiri=20 \
      --max-requests=5000 \
+     --enable-threads \
+     --mule=backend/apscheduler_start.py \
      --vacuum

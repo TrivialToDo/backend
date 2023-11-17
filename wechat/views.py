@@ -5,7 +5,6 @@ from django.views.decorators.http import require_http_methods
 from utils.utils_request import request_success
 from agent.views import agent_main
 from user.models import User
-import secrets
 
 
 # Create your views here.
@@ -13,6 +12,10 @@ import secrets
 
 @require_http_methods(['POST'])
 def recv_msg(req):
+    return request_success({
+        "type": "text",
+        "content": "fuck you!"
+    })
     body = json.loads(req.body.decode('utf-8'))
     wechat_id = body['id']
     nickname = body['name']
