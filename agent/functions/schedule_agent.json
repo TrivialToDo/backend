@@ -1,0 +1,66 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "call_add_event_agent",
+            "description": "Call the AddEventAgent to add a new event into user's schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "user_input": {
+                        "type": "string",
+                        "description": "The user input for the plan schedule."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "call_delete_event_agent",
+            "description": "Call the DeleteEventAgent to delete an event from user's schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "user_input": {
+                        "type": "string",
+                        "description": "The user input for the delete schedule."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "call_modify_event_agent",
+            "description": "Call the ModifyEventAgent to modify an event from user's schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "user_input": {
+                        "type": "string",
+                        "description": "The user input for the modify schedule."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "recall_previous_conversation",
+            "description": "Recall the previous conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "user_input": {
+                        "type": "string",
+                        "description": "The user input for the recall."
+                    }
+                }
+            }
+        }
+    }
+]

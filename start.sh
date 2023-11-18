@@ -1,4 +1,6 @@
 #!/bin/sh
+sh config/config.sh
+
 python3 manage.py migrate
 
 

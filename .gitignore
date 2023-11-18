@@ -108,3 +108,8 @@ GitHub.sublime-settings
 .vscode/*
 
 .DS_Store
+
+db.sqlite3
+
+agent/memory/*
+!agent/memory/.gitkeep

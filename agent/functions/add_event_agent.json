@@ -1,0 +1,131 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "get_day_schedule",
+            "description": "Get the user's current schedule of some day.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date of the schedule. The format should be YYYY-MM-DD."
+                    }
+                },
+                "required": [
+                    "date"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "send_message",
+            "description": "Ask the user questions to get more information, in order to create a schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string",
+                        "description": "The question to ask the user."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Get the current time. The format should be YYYY-MM-DD HH:MM:SS.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "add_event_to_schedule",
+            "description": "Add an event to the schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "event": {
+                        "type": "string",
+                        "description": "The event to add to the schedule. The expression should be as concise as possible."
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "description": "The start time of the event. The format should be YYYY-MM-DD HH:MM:SS."
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "description": "The end time of the event. The format should be YYYY-MM-DD HH:MM:SS. This is optional."
+                    },
+                    "whether_need_remind": {
+                        "type": "boolean",
+                        "description": "Whether the user needs to be reminded of the event."
+                    },
+                    "remind_time_relative_to_start_time": {
+                        "type": "object",
+                        "description": "The time to remind the user relative to the start time of the event. This is optional.",
+                        "properties": {
+                            "operator": {
+                                "type": "string",
+                                "description": "The remind time is earlier or later than the start time.",
+                                "enum": [
+                                    "earlier",
+                                    "later"
+                                ]
+                            },
+                            "interval_time": {
+                                "type": "integer",
+                                "description": "The interval time between the remind time and the start time."
+                            },
+                            "interval_unit": {
+                                "type": "string",
+                                "description": "The unit of the interval time.",
+                                "enum": [
+                                    "second",
+                                    "minute",
+                                    "hour",
+                                    "day",
+                                    "week",
+                                    "month",
+                                    "year"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "event",
+                    "start_time",
+                    "whether_need_remind"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "end_conversation",
+            "description": "End the conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "The reason why the conversation is ended."
+                    }
+                },
+                "required": [
+                    "reason"
+                ]
+            }
+        }
+    }
+]

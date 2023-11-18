@@ -5,6 +5,7 @@ from django.views.decorators.http import require_http_methods
 from utils.utils_request import request_success
 from agent.views import agent_main
 from user.models import User
+import asyncio
 
 
 # Create your views here.
@@ -33,11 +34,12 @@ def recv_msg(req):
     user.agent_deal = True
     user.save()
 
-    agent_main(body['content'], user)
+    message = asyncio.run(agent_main(body['content'], user))
 
     user.agent_deal = False
     user.save()
 
     return request_success({
-        "type": "no_reply"
+        "type" : "text",
+        "content" : message
     })

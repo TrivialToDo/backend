@@ -7,3 +7,8 @@ django_apscheduler~=0.6.2
 
 uwsgi
 mysqlclient
+
+openai~=1.2.3
+numpy
+
+https://files.pythonhosted.org/packages/98/a6/4caf215afd86e3b365f3ba0d9c01800d46bc8e42e65fe3667dd9dd3a3213/faiss_cpu-1.7.4-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
