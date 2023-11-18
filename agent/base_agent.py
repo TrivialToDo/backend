@@ -1,9 +1,14 @@
-from typing import Any, List, Dict, Tuple
+from typing import List, Dict, Tuple
 import json
 import abc
 import os
 import logging
 import openai
+import csv
+from datetime import datetime
+import pickle
+from .models import Conversation
+from asgiref.sync import sync_to_async
 
 
 class BaseAgent:
@@ -91,6 +96,24 @@ class BaseAgent:
                     messages.append(message)
         return messages, end, need_save
 
+    async def get_current_time(self) -> Tuple[str, bool, bool]:
+        logging.info(f"🔧 {self.__str__()} Function Calling: get_current_time()")
+        return datetime.now().strftime("%Y-%m-%d %H:%M:%S"), False, False
+
+    async def get_current_schedule(self) -> Tuple[str, bool, bool]:
+        logging.info(f"🔧 {self.__str__()} Function Calling: get_current_schedule()")
+        with open("docs/example_schedule.csv", "r", encoding="utf-8") as f:
+            reader = csv.reader(f)
+        return "\n".join([",".join(row) for row in reader]), False, False
+
+    async def send_message(self, question: str) -> Tuple[str, bool, bool]:
+        logging.info(f"🔧 {self.__str__()} Function Calling: send_message({question})")
+        return question, True, True
+    
+    async def end_conversation(self, reason: str) -> Tuple[str, bool, bool]:
+        logging.info(f"🔧 {self.__str__()} Function Calling: end_conversation({reason})")
+        return f"Conversation ended: {reason}", True, False
+
     async def retrieve_user_behavioral_tendency(self, query: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: retrieve_user_behavioral_tendency({query})"
@@ -122,9 +145,46 @@ class BaseAgent:
         await self.memory_manager.update(text, new_text)
         return f"Update {text} to {new_text}.", False, False
 
-    @abc.abstractmethod
-    async def __call__(self, *args, **kwargs) -> Any:
-        pass
+    async def __call__(
+        self, user_input: str, past_messages: List[Dict] | None = None
+    ) -> str:
+        logging.info(f"🤓 {self.__str__()} Called.")
+        if not past_messages:
+            messages = [
+                {
+                    "role": "system",
+                    "content": self.system_prompt,
+                },
+                {
+                    "role": "user",
+                    "content": user_input,
+                },
+            ]
+        else:
+            messages = past_messages
+            messages[-1]["content"] = user_input
+        while True:
+            response = await self.chat_completion(messages, self.functions)
+            message, end, need_save = await self.handle_ai_response(response)
+            messages.append(response)
+            messages.extend(message)
+            if end:
+                past_conversation = await sync_to_async(Conversation.objects.filter)(
+                    wechat_id=self.user.wechat_id
+                )
+                if await sync_to_async(past_conversation.exists)():
+                    await sync_to_async(past_conversation.delete)()
+                if need_save:
+                    logging.info(f"📝 {self.__str__()} Saving conversation...")
+                    binary_messages = await sync_to_async(pickle.dumps)(messages)
+                    new_conversation = await sync_to_async(Conversation.objects.create)(
+                        wechat_id=self.user.wechat_id,
+                        messages=binary_messages,
+                        type="add_event",
+                    )
+                    await sync_to_async(new_conversation.save)()
+                    logging.info(f"✅ 📝 {self.__str__()} Saved conversation.")
+                return message[-1]["content"]
 
     @abc.abstractmethod
     def __str__(self) -> str:

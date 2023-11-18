@@ -18,14 +18,14 @@
     {
         "type": "function",
         "function": {
-            "name": "call_remove_event_agent",
-            "description": "Call the RemoveEventAgent to remove an event from user's schedule.",
+            "name": "call_delete_event_agent",
+            "description": "Call the DeleteEventAgent to delete an event from user's schedule.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "user_input": {
                         "type": "string",
-                        "description": "The user input for the remove schedule."
+                        "description": "The user input for the delete schedule."
                     }
                 }
             }

@@ -18,7 +18,7 @@ class ScheduleAgent(BaseAgent):
             self.functions = json.load(f)
         self.available_function = {
             "call_add_event_agent": self.call_add_event_agent,
-            "call_remove_event_agent": self.call_remove_event_agent,
+            "call_delete_event_agent": self.call_delete_event_agent,
             "call_modify_event_agent": self.call_modify_event_agent,
             "call_chat_agent": self.call_chat_agent,
             "recall_previous_conversation": self.recall_previous_conversation,
@@ -32,9 +32,9 @@ class ScheduleAgent(BaseAgent):
         planning_agent = AddEventAgent(self.user)
         return await planning_agent(user_input), True, False
 
-    async def call_remove_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
+    async def call_delete_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
-            f"🔧 {self.__str__()} Function Calling: call_remove_event_agent({user_input})"
+            f"🔧 {self.__str__()} Function Calling: call_delete_event_agent({user_input})"
         )
         return (
             "Hello World! Welcome to contact with us by email: lkm20@mails.tsinghua.edu.cn",

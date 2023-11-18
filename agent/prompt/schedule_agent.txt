@@ -6,7 +6,7 @@ At the same time, you should judge whether the user's input contains context, an
 [Agents]
 Agents you can schedule include:
 - AddEventAgent: Add an event to the user's schedule.
-- RemoveEventAgent: Remove an event from the user's schedule.
+- DeleteEventAgent: Delete an event from the user's schedule.
 - ModifyEventAgent: Modify an event in the user's schedule.
 - ChatAgent: Engage in chat conversations with the user.
 
