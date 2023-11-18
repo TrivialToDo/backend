@@ -8,7 +8,6 @@ Agents you can schedule include:
 - AddEventAgent: Add an event to the user's schedule.
 - DeleteEventAgent: Delete an event from the user's schedule.
 - ModifyEventAgent: Modify an event in the user's schedule.
-- ChatAgent: Engage in chat conversations with the user.
 
 [Context]
 Context refers to the fact that the user's input is often related to past conversations.

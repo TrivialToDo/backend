@@ -21,6 +21,7 @@ class AddEventAgent(BaseAgent):
                 "get_day_schedule": self.get_day_schedule,
                 "send_message": self.send_message,
                 "add_event_to_schedule": self.add_event_to_schedule,
+                "end_conversation": self.end_conversation,
             }
         )
         self.memory_manager = MemoryManager(user.wechat_id)
@@ -38,22 +39,22 @@ class AddEventAgent(BaseAgent):
             f"🔧 {self.__str__()} Function Calling: add_event_to_schedule("
             + f"{event}, {start_time}, {end_time}, {whether_need_remind}, {remind_time_relative_to_start_time})"
         )
-        await sync_to_async(Event.create_event)(
-            user=self.user,
-            time_start={
-                "hour": int(start_time[11:13]),
-                "minute": int(start_time[14:16]),
-            },
-            date_start=start_time[:10],
-            time_end={
-                "hour": int(end_time[11:13]) if end_time else None,
-                "minute": int(end_time[14:16]) if end_time else None,
-            },
-            date_end=end_time[:10] if end_time else None,
-            title=event,
-            description=event,
-            repeat="never",
-        )
+        # await sync_to_async(Event.create_event)(
+        #     user=self.user,
+        #     time_start={
+        #         "hour": int(start_time[11:13]),
+        #         "minute": int(start_time[14:16]),
+        #     },
+        #     date_start=start_time[:10],
+        #     time_end={
+        #         "hour": int(end_time[11:13]) if end_time else None,
+        #         "minute": int(end_time[14:16]) if end_time else None,
+        #     },
+        #     date_end=end_time[:10] if end_time else None,
+        #     title=event,
+        #     description=event,
+        #     repeat="never",
+        # )
         return (
             f"Added event {event} to schedule. Start time: {start_time}"
             + (f" End time: {end_time}" if end_time else "")

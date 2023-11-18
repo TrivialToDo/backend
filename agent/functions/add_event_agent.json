@@ -108,5 +108,24 @@
                 ]
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "end_conversation",
+            "description": "End the conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "The reason why the conversation is ended."
+                    }
+                },
+                "required": [
+                    "reason"
+                ]
+            }
+        }
     }
 ]

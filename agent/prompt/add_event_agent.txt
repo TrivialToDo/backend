@@ -42,6 +42,7 @@ After process the user's input, you should change the degree of tendency, one de
     7.1 Ask the user about the degree of the tendency you will add in memory. Go to step 7.2.
     7.2 Add behavior tendency to memory using tool. Go to step 7 or 8.
 8. Create the event and add it to the user's schedule.
+    - If you fail to create the event three times, you should end the conversation using tool.
 
 === Important Note ===
 1. You should follow the workflow to complete the task.

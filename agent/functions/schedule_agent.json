@@ -50,22 +50,6 @@
     {
         "type": "function",
         "function": {
-            "name": "call_chat_agent",
-            "description": "Call the ChatAgent to chat with a user.",
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "user_input": {
-                        "type": "string",
-                        "description": "The user input for the chat."
-                    }
-                }
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
             "name": "recall_previous_conversation",
             "description": "Recall the previous conversation.",
             "parameters": {

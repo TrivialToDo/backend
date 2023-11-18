@@ -1,3 +1,4 @@
+import asyncio
 from typing import List, Dict, Tuple
 import json
 import abc
@@ -101,13 +102,15 @@ class BaseAgent:
         logging.info(f"🔧 {self.__str__()} Function Calling: get_current_time()")
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S"), False, False
 
+    def _process_get_day_schedule(self, r) -> str:
+        return "\n".join([i.serialize() for i in r])
+    
     async def get_day_schedule(self, date: str) -> Tuple[str, bool, bool]:
         logging.info(f"🔧 {self.__str__()} Function Calling: get_day_schedule({date})")
        
-        _date = datetime.strptime(date, '%Y-%m-%d').date()
-        r = get_day_event(_date, self.user)
-
-        return "\n".join([[i.serialize() for i in r]]), False, False
+        _date = await sync_to_async((await sync_to_async(datetime.strptime)(date, '%Y-%m-%d')).date)()
+        r = await sync_to_async(get_day_event)(_date, self.user)
+        return await sync_to_async(self._process_get_day_schedule)(r), False, False
 
     async def send_message(self, question: str) -> Tuple[str, bool, bool]:
         logging.info(f"🔧 {self.__str__()} Function Calling: send_message({question})")
@@ -183,7 +186,7 @@ class BaseAgent:
                     new_conversation = await sync_to_async(Conversation.objects.create)(
                         wechat_id=self.user.wechat_id,
                         messages=binary_messages,
-                        type="add_event",
+                        type=self.__str__(),
                     )
                     await sync_to_async(new_conversation.save)()
                     logging.info(f"✅ 📝 {self.__str__()} Saved conversation.")

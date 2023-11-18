@@ -1,6 +1,8 @@
 import json
 from .base_agent import BaseAgent
 from .add_event_agent import AddEventAgent
+from .delete_event_agent import DeleteEventAgent
+from .modify_event_agent import ModifyEventAgent
 from typing import Tuple
 import logging
 from user.models import User
@@ -36,21 +38,15 @@ class ScheduleAgent(BaseAgent):
         logging.info(
             f"🔧 {self.__str__()} Function Calling: call_delete_event_agent({user_input})"
         )
-        return (
-            "Hello World! Welcome to contact with us by email: lkm20@mails.tsinghua.edu.cn",
-            True,
-            False,
-        )
+        delete_event_agent = DeleteEventAgent(self.user)
+        return await delete_event_agent(user_input), True, False
 
     async def call_modify_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: call_modify_event_agent({user_input})"
         )
-        return (
-            "Hello World! Welcome to contact with us by email: lkm20@mails.tsinghua.edu.cn",
-            True,
-            False,
-        )
+        modify_event_agent = ModifyEventAgent(self.user)
+        return await modify_event_agent(user_input), True, False
 
     async def call_chat_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
@@ -73,13 +69,18 @@ class ScheduleAgent(BaseAgent):
         )()
         if not conversation:
             return "No previous conversation", False, False
-        if conversation.type == "add_event":
+        if conversation.type == "AddEventAgent":
             planning_agent = AddEventAgent(self.user)
-            
             return await planning_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
+        elif conversation.type == "DeleteEventAgent":
+            delete_event_agent = DeleteEventAgent(self.user)
+            return await delete_event_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
+        elif conversation.type == "ModifyEventAgent":
+            modify_event_agent = ModifyEventAgent(self.user)
+            return await modify_event_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
         else:
-            logging.error(f"😱 {self.__str__()} Unknown conversation type: {conversation.type}")
-            return "Hello World! Welcome to contact with us by email: lkm20@mails.tsinghua.edu.cn", True, False
+            logging.info(f"😱 {self.__str__()} Unknown conversation type: {conversation.type}")
+            return f"Unknown conversation type: {conversation.type}", False, False
 
     async def __call__(self, user_input: str) -> str:
         logging.info(f"😄 {self.__str__()} Called.")
