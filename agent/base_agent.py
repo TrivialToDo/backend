@@ -4,9 +4,10 @@ import abc
 import os
 import logging
 import openai
-import csv
 from datetime import datetime
 import pickle
+
+from schedule.views import get_day_event
 from .models import Conversation
 from asgiref.sync import sync_to_async
 
@@ -100,11 +101,13 @@ class BaseAgent:
         logging.info(f"🔧 {self.__str__()} Function Calling: get_current_time()")
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S"), False, False
 
-    async def get_current_schedule(self) -> Tuple[str, bool, bool]:
-        logging.info(f"🔧 {self.__str__()} Function Calling: get_current_schedule()")
-        with open("docs/example_schedule.csv", "r", encoding="utf-8") as f:
-            reader = csv.reader(f)
-        return "\n".join([",".join(row) for row in reader]), False, False
+    async def get_day_schedule(self, date: str) -> Tuple[str, bool, bool]:
+        logging.info(f"🔧 {self.__str__()} Function Calling: get_day_schedule({date})")
+       
+        _date = datetime.strptime(date, '%Y-%m-%d').date()
+        r = get_day_event(_date, self.user)
+
+        return "\n".join([[i.serialize() for i in r]]), False, False
 
     async def send_message(self, question: str) -> Tuple[str, bool, bool]:
         logging.info(f"🔧 {self.__str__()} Function Calling: send_message({question})")

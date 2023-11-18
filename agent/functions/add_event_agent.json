@@ -2,11 +2,19 @@
     {
         "type": "function",
         "function": {
-            "name": "get_current_schedule",
-            "description": "Get the user's current schedule.",
+            "name": "get_day_schedule",
+            "description": "Get the user's current schedule of some day.",
             "parameters": {
                 "type": "object",
-                "properties": {}
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date of the schedule. The format should be YYYY-MM-DD."
+                    }
+                },
+                "required": [
+                    "date"
+                ]
             }
         }
     },

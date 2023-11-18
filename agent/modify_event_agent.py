@@ -16,7 +16,7 @@ class ModifyEventAgent(BaseAgent):
         self.available_function.update(
             {
                 "get_current_time": self.get_current_time,
-                "get_current_schedule": self.get_current_schedule,
+                "get_day_schedule": self.get_day_schedule,
                 "send_message": self.send_message,
                 "modify_event_to_schedule": self.modify_event_to_schedule,
                 "end_conversation": self.end_conversation,
