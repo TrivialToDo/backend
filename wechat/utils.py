@@ -16,7 +16,7 @@ def send_message(user: User, _type: str, content: str):
             f'{config.wechat_url}/send_msg',
             headers=headers,
             cookies=cookies,
-            data={
+            json={
                 "id": user.wechat_id,
                 "type": _type,
                 "content": content
