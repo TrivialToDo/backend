@@ -6,12 +6,12 @@ from utils.utils_logger import get_logger
 
 def my_job():
     logger = get_logger()
-    send_message(User(wechat_id='wxid_s1epg7j4rred22'), 'test', "fuck you")
+    send_message(User(wechat_id='wxid_s1epg7j4rred22'), 'text', "fuck you")
     logger.info("request wx")
 
 
 scheduler = BackgroundScheduler()
-job = scheduler.add_job(my_job, timezone='Asia/Shanghai', trigger='interval', seconds=10)
+job = scheduler.add_job(my_job, timezone='Asia/Shanghai', trigger='interval', seconds=300)
 get_logger().info(job.id)
 scheduler.start()
 

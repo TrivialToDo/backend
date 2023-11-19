@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime, timedelta
 import secrets
 import jwt
+from backend import settings
 
 
 # Create your models here.
@@ -34,6 +35,7 @@ class User(models.Model):
         self.temp_token = token
         self.temp_token_expires = datetime.now() + timedelta(seconds=self.token_expiring_time)
         self.save()
+        return self.temp_token
 
     def generate_JWT(self):
         payload = {

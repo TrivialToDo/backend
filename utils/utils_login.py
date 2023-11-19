@@ -20,7 +20,7 @@ def login_check(func):
             user = User.objects.filter(id=user_id).first()
             if user is None:
                 return request_fail(405, 'invalid JWT')
-            func(request, *args, **kwargs, user=user)
+            return func(request, *args, **kwargs, user=user)
         except jwt.exceptions.DecodeError:
             return request_fail(405, 'invalid JWT')
 

@@ -2,6 +2,7 @@ from datetime import datetime, timedelta
 from user.models import User
 from django.views.decorators.http import require_http_methods
 from event.models import Event
+from utils.utils_logger import get_logger
 from utils.utils_login import login_check
 from utils.utils_request import request_success, request_fail
 
@@ -38,7 +39,7 @@ def get_date(request, _date: str):
 @require_http_methods(['GET'])
 def get_day(request, _date: str, user: User = None):
     _date, err = get_date(request, _date)
-    if err:
+    if err is not None:
         return err
 
     r = get_day_event(_date, user)
@@ -51,9 +52,8 @@ def get_day(request, _date: str, user: User = None):
 @require_http_methods(['GET'])
 def get_week(request, _date: str, user: User = None):
     _date, err = get_date(request, _date)
-    if err:
+    if err is not None:
         return err
-
     r = []
     for _ in range(7):
         r.append([i.serialize() for i in get_day_event(_date, user)])
@@ -67,7 +67,7 @@ def get_week(request, _date: str, user: User = None):
 @require_http_methods(['GET'])
 def get_month(request, _date: str, user: User = None):
     _date, err = get_date(request, _date)
-    if err:
+    if err is not None:
         return err
 
     r = []
