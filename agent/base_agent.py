@@ -12,6 +12,8 @@ from schedule.views import get_day_event
 from .models import Conversation
 from asgiref.sync import sync_to_async
 
+import backoff
+
 
 class BaseAgent:
     def __init__(self) -> None:
@@ -27,25 +29,22 @@ class BaseAgent:
             "update_record_in_memory": self.update_record_in_memory,
         }
 
+    @backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
     async def chat_completion(
         self, messages: List[Dict[str, str]], functions: List = []
     ) -> Dict[str, str]:
-        try:
-            response = openai.chat.completions.create(
-                model="gpt-4-1106-preview",
-                messages=messages,
-                tools=functions,
-                tool_choice="auto",
-                max_tokens=1024,
-                temperature=0.05,
-                top_p=1,
-                frequency_penalty=0,
-                presence_penalty=0,
-            )
-            return response.choices[0].message
-        except Exception as e:
-            logging.error(f"❌ 🤖 Chat completion error: {e}")
-            return ""
+        response = openai.chat.completions.create(
+            model="gpt-4-1106-preview",
+            messages=messages,
+            tools=functions,
+            tool_choice="auto",
+            max_tokens=1024,
+            temperature=0.05,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0,
+        )
+        return response.choices[0].message
 
     async def handle_ai_response(
         self, response

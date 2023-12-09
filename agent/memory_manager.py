@@ -7,6 +7,7 @@ import json
 import os
 import asyncio
 
+import backoff
 
 class MemoryManager:
     def __init__(self, user_id: str) -> None:
@@ -32,17 +33,14 @@ class MemoryManager:
             f"✅ 🧠 {self.__str__()} Initialized, memory size: {self.index.ntotal}"
         )
 
+    @backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
     async def embedding(self, text: str, model="text-embedding-ada-002") -> List[float]:
         # length of output: 1536
-        try:
-            response = openai.embeddings.create(
-                input=text.replace("\n", ""),
-                model=model,
-            ).data[0].embedding
-            return response
-        except Exception as e:
-            logging.error(f"❌ 🧠 {self.__str__()} Embedding error: {e}")
-            return []
+        response = openai.embeddings.create(
+            input=text.replace("\n", ""),
+            model=model,
+        ).data[0].embedding
+        return response
 
     async def search(self, query: str, k: int = 3) -> List[str]:
         if self.index.ntotal == 0:
