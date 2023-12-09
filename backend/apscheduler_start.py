@@ -1,8 +1,8 @@
-from apscheduler.schedulers.background import BackgroundScheduler
 from wechat.utils import send_message
 from user.models import User
 from utils.utils_logger import get_logger
-
+from utils.utils_scheduler import get_scheduler
+from event.models import Event
 
 def my_job():
     logger = get_logger()
@@ -10,9 +10,9 @@ def my_job():
     logger.info("request wx")
 
 
-scheduler = BackgroundScheduler()
-job = scheduler.add_job(my_job, timezone='Asia/Shanghai', trigger='interval', seconds=300)
-get_logger().info(job.id)
+scheduler = get_scheduler()
+# job = scheduler.add_job(my_job, timezone='Asia/Shanghai', trigger='interval', seconds=300)
+# get_logger().info(job.id)
 scheduler.start()
 
 try:

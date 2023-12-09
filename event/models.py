@@ -6,6 +6,7 @@ from django.db import models
 from django.http import JsonResponse
 from user.models import User
 from typing import Optional, Dict
+from utils.utils_scheduler import get_scheduler
 
 
 # Create your models here.
@@ -23,7 +24,10 @@ class Event(models.Model):
     dateEnd = models.DateField(default=date(9999, 12, 31))
     dayOfWeek = models.IntegerField(null=True)  # 0-6
     dayOfMonth = models.IntegerField(null=True)  # 1-31
-    reminder = models.TimeField(null=False)
+    reminder = models.TimeField(null=True)
+    remind_type = models.CharField(max_length=10, default='wechat', choices=(
+        ('message', 'Message'), ('phone_call', 'Phone Call'), ('wechat', 'WeChat')
+    ))
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -54,28 +58,76 @@ class Event(models.Model):
 
         return res
 
+    def add_schedule_reminder(self):
+        if self.reminder is None:
+            return
+        scheduler = get_scheduler()
+        start_date = self.dateStart
+
+        def remind_func(remind_type):
+            # TODO: send remind
+            if remind_type == 'wechat':
+                pass
+            elif remind_type == 'message':
+                pass
+            elif remind_type == 'phone_call':
+                pass
+
+        if self.repeat == 'never':
+            scheduler.add_job(
+                lambda: remind_func(self.remind_type),
+                'date',
+                run_date=datetime.combine(start_date, self.reminder)
+            )
+            return
+        end_date = self.dateEnd
+        if self.repeat == 'daily':
+            scheduler.add_job(
+                lambda: remind_func(self.remind_type),
+                'cron',
+                start_date=datetime.combine(start_date, self.reminder),
+                end_date=datetime.combine(end_date, self.reminder),
+                day='*',
+            )
+        elif self.repeat == 'weekly':
+            scheduler.add_job(
+                lambda: remind_func(self.remind_type),
+                'cron',
+                start_date=datetime.combine(start_date, self.reminder),
+                end_date=datetime.combine(end_date, self.reminder),
+                day_of_week=self.dayOfWeek,
+            )
+        elif self.repeat == 'monthly':
+            scheduler.add_job(
+                lambda: remind_func(self.remind_type),
+                'cron',
+                start_date=datetime.combine(start_date, self.reminder),
+                end_date=datetime.combine(end_date, self.reminder),
+                day=self.dayOfMonth,
+            )
+
     @staticmethod
     def create_event(
-        user: User,
-        time_start: Dict[str, int],
-        date_start: str,
-        time_end: Optional[Dict[str, int]] = None,
-        date_end: Optional[str] = None,
-        title: str = 'Untitled',
-        description: str = '',
-        repeat: str = 'never',
-        reminder: Optional[Dict[str, int]] = None
+            user: User,
+            time_start: Dict[str, int],
+            date_start: str,
+            time_end: Optional[Dict[str, int]] = None,
+            date_end: Optional[str] = None,
+            title: str = 'Untitled',
+            description: str = '',
+            repeat: str = 'never',
+            reminder: Optional[Dict[str, int]] = None
     ):
         _hash = hashlib.md5(
             (
-                title + ';' +
-                description + ';' +
-                repeat + ';' +
-                str(time_start) + ';' +
-                str(time_end) + ';' +
-                str(date_start) + ';' +
-                str(date_end) + ';' +
-                json.dumps(user.serialize())
+                    title + ';' +
+                    description + ';' +
+                    repeat + ';' +
+                    str(time_start) + ';' +
+                    str(time_end) + ';' +
+                    str(date_start) + ';' +
+                    str(date_end) + ';' +
+                    json.dumps(user.serialize())
             ).encode('utf-8')
         ).hexdigest()
 
@@ -130,21 +182,22 @@ class Event(models.Model):
             e.dayOfWeek = date_start.weekday()
         elif repeat == 'monthly':
             e.dayOfMonth = date_start.day
+        e.add_schedule_reminder()
         e.save()
         return e, None
 
     @staticmethod
     def modify_event(
-        user: User,
-        hash: str,
-        time_start: Dict[str, int] = None,
-        date_start: str = None,
-        time_end: Optional[Dict[str, int]] = None,
-        date_end: Optional[str] = None,
-        title: str = None,
-        description: str = None,
-        repeat: str = None,
-        reminder: Optional[Dict[str, int]] = None
+            user: User,
+            hash: str,
+            time_start: Dict[str, int] = None,
+            date_start: str = None,
+            time_end: Optional[Dict[str, int]] = None,
+            date_end: Optional[str] = None,
+            title: str = None,
+            description: str = None,
+            repeat: str = None,
+            reminder: Optional[Dict[str, int]] = None
     ):
         try:
             event = Event.objects.get(hash=hash)
@@ -164,7 +217,7 @@ class Event(models.Model):
                     "msg": "permission denied"
                 }
             }, status=403)
-        
+
         new_time_start = time(hour=time_start['hour'], minute=time_start['minute']) if time_start is not None else None
         new_time_end = time(hour=time_end['hour'], minute=time_end['minute']) if time_end is not None else None
         new_date_start = datetime.fromisoformat(date_start).date() if date_start is not None else None
@@ -199,7 +252,7 @@ class Event(models.Model):
                     "msg": "invalid reminder"
                 }
             }, status=400)
-        
+
         if title is not None:
             event.title = title
         if description is not None:
