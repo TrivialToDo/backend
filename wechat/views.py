@@ -35,18 +35,19 @@ def process_image(base64_image) -> str:
                 "role": "user",
                 "content": [
                     {
-                    "type": "text",
-                    "text": "Extract all text from the image. You should only respond with the text in the image.\nIf the image is about a conversation, you should use User1, User2... to represent different users."
+                        "type": "text",
+                        "text": "Extract all text from the image. You should only respond with the text in the image.\nIf the image is about a conversation, you should use User1, User2... to represent different users. You can use avatar to identify different users. Different user has different avatar while the same user has the same avatar."
                     },
                     {
-                    "type": "image_url",
-                    "image_url": {
-                        "url": f"data:image/jpeg;base64,{base64_image}"
-                    }
+                        "type": "image_url",
+                        "image_url": {
+                            "url": f"data:image/jpeg;base64,{base64_image}"
+                        }
                     }
                 ]
             }
         ],
+        max_tokens=4096,
         temperature=0
     )
     return response.choices[0].message.content
