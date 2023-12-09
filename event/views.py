@@ -34,3 +34,18 @@ def del_event(request, hash: str, user: User = None):
     return request_success({
         "msg": "Succeed"
     })
+
+@login_check
+@require_http_methods(['POST'])
+def new_event(request, user: User = None):
+    Event.create_event(
+        user=user,
+        time_start=request.POST.get('timeStart'),
+        date_start=request.POST.get('dateStart'),
+        time_end=request.POST.get('timeEnd'),
+        date_end=request.POST.get('dateEnd'),
+        title=request.POST.get('title'),
+        description=request.POST.get('description'),
+        repeat=request.POST.get('repeat'),
+        reminder=request.POST.get('reminder'),
+    )
