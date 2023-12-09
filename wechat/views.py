@@ -37,7 +37,7 @@ def process_image(base64_image) -> str:
                 "content": [
                     {
                     "type": "text",
-                    "text": "你需要提取出这张图片里的文字信息，只输出你提取到的文字，不要输出其他内容:\n"
+                    "text": "Extract all text from the image. You should only respond with the text in the image.\nIf the image is about a conversation, you should use User1, User2... to represent different users."
                     },
                     {
                     "type": "image_url",
@@ -48,7 +48,6 @@ def process_image(base64_image) -> str:
                 ]
             }
         ],
-        max_tokens=300,
         temperature=0
     )
     return response.choices[0].message.content

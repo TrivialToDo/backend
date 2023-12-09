@@ -17,7 +17,6 @@ class EventTestCase(TestCase):
             'content': audio_content
         }
         resp = self.client.post('/wechat/receive_msg', data=json.dumps(data), content_type='application/json')
-        print(resp.json)
         self.assertEqual(resp.status_code, 200)
 
     def test_get_image(self):
@@ -31,5 +30,4 @@ class EventTestCase(TestCase):
             'content': image_content
         }
         resp = self.client.post('/wechat/receive_msg', data=json.dumps(data), content_type='application/json')
-        print(resp.json)
         self.assertEqual(resp.status_code, 200)
