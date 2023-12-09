@@ -23,6 +23,7 @@ class Event(models.Model):
     dateEnd = models.DateField(default=date(9999, 12, 31))
     dayOfWeek = models.IntegerField(null=True)  # 0-6
     dayOfMonth = models.IntegerField(null=True)  # 1-31
+    reminder = models.TimeField(null=False)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -45,6 +46,11 @@ class Event(models.Model):
             }
         if self.dateEnd:
             res['dateEnd'] = self.dateEnd.isoformat()
+        if self.reminder:
+            res['reminder'] = {
+                'hour': self.reminder.hour,
+                'minute': self.reminder.minute,
+            }
 
         return res
 
@@ -57,7 +63,8 @@ class Event(models.Model):
             date_end: Optional[str] = None,
             title: str = 'Untitled',
             description: str = '',
-            repeat: str = 'never'
+            repeat: str = 'never',
+            reminder: Optional[Dict[str, int]] = None
     ):
         _hash = hashlib.md5(
             (
@@ -76,6 +83,7 @@ class Event(models.Model):
         time_end = time(hour=time_end['hour'], minute=time_end['minute']) if time_end is not None else None
         date_start = datetime.fromisoformat(date_start).date()
         date_end = datetime.fromisoformat(date_end).date() if date_end is not None else date(9999, 12, 31)
+        reminder = time(hour=reminder['hour'], minute=reminder['minute']) if reminder is not None else None
 
         if repeat not in ['never', 'daily', 'weekly', 'monthly']:
             return None, JsonResponse({
@@ -99,6 +107,13 @@ class Event(models.Model):
                     "msg": "invalid date range"
                 }
             }, status=400)
+        if reminder is not None and time_start > reminder:
+            return None, JsonResponse({
+                "code": 400,
+                "data": {
+                    "msg": "invalid reminder"
+                }
+            }, status=400)
 
         e = Event(
             hash=_hash,
@@ -109,6 +124,7 @@ class Event(models.Model):
             timeEnd=time_end,
             dateStart=date_start,
             dateEnd=date_end,
+            reminder=reminder,
             user=user
         )
         if repeat == 'weekly':
