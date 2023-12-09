@@ -62,5 +62,21 @@
                 }
             }
         }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "call_chat_agent",
+            "description": "Call the ChatAgent to chat with user.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "user_input": {
+                        "type": "string",
+                        "description": "The user input for the chat."
+                    }
+                }
+            }
+        }
     }
 ]

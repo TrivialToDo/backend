@@ -3,6 +3,7 @@ from .base_agent import BaseAgent
 from .add_event_agent import AddEventAgent
 from .delete_event_agent import DeleteEventAgent
 from .modify_event_agent import ModifyEventAgent
+from .chat_agent import ChatAgent
 from typing import Tuple
 import logging
 from user.models import User
@@ -68,7 +69,7 @@ class ScheduleAgent(BaseAgent):
             )(wechat_id=self.user.wechat_id)).first
         )()
         if not conversation:
-            return "No previous conversation", False, False
+            return "No previous conversation. You should call new agent.", False, False
         if conversation.type == "AddEventAgent":
             planning_agent = AddEventAgent(self.user)
             return await planning_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
@@ -78,6 +79,9 @@ class ScheduleAgent(BaseAgent):
         elif conversation.type == "ModifyEventAgent":
             modify_event_agent = ModifyEventAgent(self.user)
             return await modify_event_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
+        elif conversation.type == "ChatAgent":
+            chat_agent = ChatAgent(self.user)
+            return await chat_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
         else:
             logging.info(f"😱 {self.__str__()} Unknown conversation type: {conversation.type}")
             return f"Unknown conversation type: {conversation.type}", False, False

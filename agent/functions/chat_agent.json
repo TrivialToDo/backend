@@ -1,0 +1,18 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "send_message",
+            "description": "Send message to user.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "The message to send."
+                    }
+                }
+            }
+        }
+    }
+]
