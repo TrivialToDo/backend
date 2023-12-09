@@ -78,7 +78,9 @@ class Event(models.Model):
             scheduler.add_job(
                 lambda: remind_func(self.remind_type),
                 'date',
-                run_date=datetime.combine(start_date, self.reminder)
+                id=self.hash,
+                run_date=datetime.combine(start_date, self.reminder),
+                replace_existing=True
             )
             return
         end_date = self.dateEnd
@@ -86,25 +88,31 @@ class Event(models.Model):
             scheduler.add_job(
                 lambda: remind_func(self.remind_type),
                 'cron',
+                id=self.hash,
                 start_date=datetime.combine(start_date, self.reminder),
                 end_date=datetime.combine(end_date, self.reminder),
                 day='*',
+                replace_existing=True
             )
         elif self.repeat == 'weekly':
             scheduler.add_job(
                 lambda: remind_func(self.remind_type),
                 'cron',
+                id=self.hash,
                 start_date=datetime.combine(start_date, self.reminder),
                 end_date=datetime.combine(end_date, self.reminder),
                 day_of_week=self.dayOfWeek,
+                replace_existing=True
             )
         elif self.repeat == 'monthly':
             scheduler.add_job(
                 lambda: remind_func(self.remind_type),
                 'cron',
+                id=self.hash,
                 start_date=datetime.combine(start_date, self.reminder),
                 end_date=datetime.combine(end_date, self.reminder),
                 day=self.dayOfMonth,
+                replace_existing=True
             )
 
     @staticmethod
