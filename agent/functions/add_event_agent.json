@@ -53,9 +53,13 @@
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "event": {
+                    "title": {
                         "type": "string",
-                        "description": "The event to add to the schedule. The expression should be as concise as possible."
+                        "description": "The title of the event to add to the schedule. The expression should be as concise as possible."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The description of the event to add to the schedule."
                     },
                     "start_time": {
                         "type": "string",
@@ -65,44 +69,32 @@
                         "type": "string",
                         "description": "The end time of the event. The format should be YYYY-MM-DD HH:MM:SS. This is optional."
                     },
-                    "whether_need_remind": {
-                        "type": "boolean",
-                        "description": "Whether the user needs to be reminded of the event."
-                    },
-                    "remind_time_relative_to_start_time": {
+                    "reminder": {
                         "type": "object",
-                        "description": "The time to remind the user relative to the start time of the event. This is optional.",
+                        "description": "The time to remind the user. This is optional.",
                         "properties": {
-                            "operator": {
+                            "time": {
                                 "type": "string",
-                                "description": "The remind time is earlier or later than the start time.",
-                                "enum": [
-                                    "earlier",
-                                    "later"
-                                ]
+                                "description": "The time to remind the user. The format should be YYYY-MM-DD HH:MM:SS."
                             },
-                            "interval_time": {
-                                "type": "integer",
-                                "description": "The interval time between the remind time and the start time."
-                            },
-                            "interval_unit": {
+                            "type": {
                                 "type": "string",
-                                "description": "The unit of the interval time.",
+                                "description": "The type of the reminder. Default is SoftReminder.",
                                 "enum": [
-                                    "second",
-                                    "minute",
-                                    "hour",
-                                    "day",
-                                    "week",
-                                    "month",
-                                    "year"
+                                    "SoftReminder",
+                                    "ForceReminder"
                                 ]
                             }
-                        }
+                        },
+                        "required": [
+                            "time",
+                            "type"
+                        ]
                     }
                 },
                 "required": [
-                    "event",
+                    "title",
+                    "description",
                     "start_time",
                     "whether_need_remind"
                 ]

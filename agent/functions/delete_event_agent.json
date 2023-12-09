@@ -53,9 +53,9 @@
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "event": {
+                    "title": {
                         "type": "string",
-                        "description": "The event to delete from the schedule. The event name should be got by using the get_current_schedule function."
+                        "description": "The title of the event to delete from the schedule. The event name should be got by using the get_current_schedule function."
                     },
                     "start_time": {
                         "type": "string",

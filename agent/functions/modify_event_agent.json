@@ -53,7 +53,7 @@
             "parameters": {
                 "type": "object",
                 "properties": {
-                    "event": {
+                    "title": {
                         "type": "string",
                         "description": "The modified event to modify of the schedule. The event name should be got by using the get_current_schedule function."
                     },
@@ -61,9 +61,13 @@
                         "type": "string",
                         "description": "The start time of the modified event. The format should be YYYY-MM-DD HH:MM:SS. The start time should be got by using the get_current_schedule function."
                     },
-                    "new_event": {
+                    "new_title": {
                         "type": "string",
                         "description": "The name of the event. The expression should be as concise as possible."
+                    },
+                    "new_description": {
+                        "type": "string",
+                        "description": "The description of the event. This is optional."
                     },
                     "new_start_time": {
                         "type": "string",
@@ -73,44 +77,31 @@
                         "type": "string",
                         "description": "The end time of the event. The format should be YYYY-MM-DD HH:MM:SS. This is optional."
                     },
-                    "new_whether_need_remind": {
-                        "type": "boolean",
-                        "description": "Whether the user needs to be reminded of the event."
-                    },
-                    "new_remind_time_relative_to_start_time": {
+                    "new_reminder": {
                         "type": "object",
-                        "description": "The time to remind the user relative to the start time of the event. This is optional.",
+                        "description": "The time to remind the user. This is optional.",
                         "properties": {
-                            "operator": {
+                            "time": {
                                 "type": "string",
-                                "description": "The remind time is earlier or later than the start time.",
-                                "enum": [
-                                    "earlier",
-                                    "later"
-                                ]
+                                "description": "The time to remind the user. The format should be YYYY-MM-DD HH:MM:SS."
                             },
-                            "interval_time": {
-                                "type": "integer",
-                                "description": "The interval time between the remind time and the start time."
-                            },
-                            "interval_unit": {
+                            "type": {
                                 "type": "string",
-                                "description": "The unit of the interval time.",
+                                "description": "The type of the reminder. Default is SoftReminder.",
                                 "enum": [
-                                    "second",
-                                    "minute",
-                                    "hour",
-                                    "day",
-                                    "week",
-                                    "month",
-                                    "year"
+                                    "SoftReminder",
+                                    "ForceReminder"
                                 ]
                             }
-                        }
+                        },
+                        "required": [
+                            "time",
+                            "type"
+                        ]
                     }
                 },
                 "required": [
-                    "event",
+                    "title",
                     "start_time"
                 ]
             }

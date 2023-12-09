@@ -28,6 +28,7 @@ class BaseAgent:
             "remove_record_in_memory": self.remove_record_in_memory,
             "update_record_in_memory": self.update_record_in_memory,
         }
+        self.ai_response_history = []
 
     @backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
     async def chat_completion(
@@ -95,6 +96,16 @@ class BaseAgent:
                         f"🙅 {self.__str__()}: Error calling function {function_name} with args {function_args}: {str(e)}."
                     )
                     messages.append(message)
+        
+        self.ai_response_history.append({
+            "content": content,
+            "first_tool": tool_calls[0].function.name if tool_calls else None,
+        })
+        if len(self.ai_response_history) > 10:
+            return "我不知道该说什么，但是花太多钱了，你可以再试一次。", True, False
+        if len(self.ai_response_history) > 1 and self.ai_response_history[-1]==self.ai_response_history[-2]:
+            return "我不知道该说什么，但是 OpenAI 好像崩了，你可以再试一次。", True, False
+
         return messages, end, need_save
 
     async def get_current_time(self) -> Tuple[str, bool, bool]:

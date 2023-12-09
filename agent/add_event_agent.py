@@ -1,6 +1,6 @@
 import json
 from .base_agent import BaseAgent
-from typing import Dict, Any, Tuple
+from typing import Dict, Tuple
 import logging
 from .memory_manager import MemoryManager
 from user.models import User
@@ -29,43 +29,50 @@ class AddEventAgent(BaseAgent):
 
     async def add_event_to_schedule(
         self,
-        event: str,
+        title: str,
+        description: str,
         start_time: str,
-        whether_need_remind: bool,
         end_time: str = "",
-        remind_time_relative_to_start_time: Dict[str, Any] = {},
+        reminder: Dict[str, str] = {},
     ) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: add_event_to_schedule("
-            + f"{event}, {start_time}, {end_time}, {whether_need_remind}, {remind_time_relative_to_start_time})"
+            + f"title={title}, description={description}, start_time={start_time}, end_time={end_time}, reminder={reminder})"
         )
-        # await sync_to_async(Event.create_event)(
-        #     user=self.user,
-        #     time_start={
-        #         "hour": int(start_time[11:13]),
-        #         "minute": int(start_time[14:16]),
-        #     },
-        #     date_start=start_time[:10],
-        #     time_end={
-        #         "hour": int(end_time[11:13]) if end_time else None,
-        #         "minute": int(end_time[14:16]) if end_time else None,
-        #     },
-        #     date_end=end_time[:10] if end_time else None,
-        #     title=event,
-        #     description=event,
-        #     repeat="never",
-        # )
-        return (
-            f"Added event {event} to schedule. Start time: {start_time}"
-            + (f" End time: {end_time}" if end_time else "")
-            + (
-                f" Remind time relative to start time: {remind_time_relative_to_start_time}"
-                if whether_need_remind
-                else "No need to remind."
-            ),
-            True,
-            False,
+
+        e, response = await sync_to_async(Event.create_event)(
+            user=self.user,
+            time_start={
+                "hour": int(start_time[11:13]),
+                "minute": int(start_time[14:16]),
+            },
+            date_start=start_time[:10],
+            time_end={
+                "hour": int(end_time[11:13]),
+                "minute": int(end_time[14:16]),
+            } if end_time else None,
+            date_end=end_time[:10] if end_time else None,
+            title=title,
+            description=description,
+            repeat="never",
+            reminder={
+                "hour": int(reminder["time"][11:13]),
+                "minute": int(reminder["time"][14:16]),
+            } if reminder else None,
         )
+        if response:
+            return (
+                response.json["data"]["msg"],
+                True,
+                False,
+            )
+        else:
+            return (
+                "成功添加日程: " + title + "\n" + "description: " + description + "\n" + "start_time: " + start_time + "\n" + "end_time: " + end_time + "\n" + "reminder time: " + reminder["time"] + "\n" + "reminder type: " + reminder["type"],
+                True,
+                False,
+            )
+
 
     def __str__(self) -> str:
         return "AddEventAgent"
