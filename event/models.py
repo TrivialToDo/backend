@@ -137,13 +137,13 @@ class Event(models.Model):
     def modify_event(
         user: User,
         hash: str,
-        time_start: Dict[str, int],
-        date_start: str,
+        time_start: Dict[str, int] = None,
+        date_start: str = None,
         time_end: Optional[Dict[str, int]] = None,
         date_end: Optional[str] = None,
-        title: str = 'Untitled',
-        description: str = '',
-        repeat: str = 'never',
+        title: str = None,
+        description: str = None,
+        repeat: str = None,
         reminder: Optional[Dict[str, int]] = None
     ):
         try:
@@ -165,10 +165,10 @@ class Event(models.Model):
                 }
             }, status=403)
         
-        new_time_start = time(hour=time_start['hour'], minute=time_start['minute'])
+        new_time_start = time(hour=time_start['hour'], minute=time_start['minute']) if time_start is not None else None
         new_time_end = time(hour=time_end['hour'], minute=time_end['minute']) if time_end is not None else None
-        new_date_start = datetime.fromisoformat(date_start).date()
-        new_date_end = datetime.fromisoformat(date_end).date() if date_end is not None else date(9999, 12, 31)
+        new_date_start = datetime.fromisoformat(date_start).date() if date_start is not None else None
+        new_date_end = datetime.fromisoformat(date_end).date() if date_end is not None else None
         new_reminder = time(hour=reminder['hour'], minute=reminder['minute']) if reminder is not None else None
 
         if repeat not in ['never', 'daily', 'weekly', 'monthly']:
@@ -200,24 +200,31 @@ class Event(models.Model):
                 }
             }, status=400)
         
-        event.title = title
-        event.description = description
-        event.repeat = repeat
-        event.timeStart = new_time_start
-        event.timeEnd = new_time_end
-        event.dateStart = new_date_start
-        event.dateEnd = new_date_end
-        event.reminder = new_reminder
+        if title is not None:
+            event.title = title
+        if description is not None:
+            event.description = description
+        if repeat is not None:
+            event.repeat = repeat
+            if repeat == 'weekly':
+                event.dayOfWeek = new_date_start.weekday()
+                event.dayOfMonth = None
+            elif repeat == 'monthly':
+                event.dayOfWeek = None
+                event.dayOfMonth = new_date_start.day
+            else:
+                event.dayOfWeek = None
+                event.dayOfMonth = None
+        if new_time_start is not None:
+            event.timeStart = new_time_start
+        if new_time_end is not None:
+            event.timeEnd = new_time_end
+        if new_date_start is not None:
+            event.dateStart = new_date_start
+        if new_date_end is not None:
+            event.dateEnd = new_date_end
+        if new_reminder is not None:
+            event.reminder = new_reminder
 
-        if repeat == 'weekly':
-            event.dayOfWeek = new_date_start.weekday()
-            event.dayOfMonth = None
-        elif repeat == 'monthly':
-            event.dayOfWeek = None
-            event.dayOfMonth = new_date_start.day
-        else:
-            event.dayOfWeek = None
-            event.dayOfMonth = None
-        
         event.save()
         return event, None
