@@ -27,6 +27,32 @@ def process_audio(audio_path: str) -> str:
     )
     return message
 
+@backoff.on_exception(backoff.expo, Exception, max_time=60)
+def process_image(base64_image) -> str:
+    response = openai.chat.completions.create(
+        model='gpt-4-vision-preview',
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                    "type": "text",
+                    "text": "你需要提取出这张图片里的文字信息，只输出你提取到的文字，不要输出其他内容:\n"
+                    },
+                    {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": f"data:image/jpeg;base64,{base64_image}"
+                    }
+                    }
+                ]
+            }
+        ],
+        max_tokens=300,
+        temperature=0
+    )
+    return response.choices[0].message.content
+
 
 @require_http_methods(['POST'])
 def recv_msg(req):
@@ -60,6 +86,9 @@ def recv_msg(req):
             f.write(base64.b64decode(body['content']))
         body['content'] = process_audio(audio_path)
         os.remove(audio_path)
+
+    if type == 'image':
+        body['content'] = process_image(body['content'])
 
     try:
         user.agent_deal = True
