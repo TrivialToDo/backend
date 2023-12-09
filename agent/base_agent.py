@@ -68,8 +68,8 @@ class BaseAgent:
                 except KeyError as _:
                     message["content"] = f"No function named {function_name}."
                     logging.info(
-                        f"🙅{self.__str__()}: No function named {function_name}.
-                    ")
+                        f"🙅{self.__str__()}: No function named {function_name}."
+                    )
                     messages.append(message)
                 try:
                     function_args = json.loads(tool_call.function.arguments)
