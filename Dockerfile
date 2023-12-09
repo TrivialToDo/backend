@@ -8,6 +8,6 @@ COPY . .
 
 RUN pip install -r requirements.txt
 
-EXPOSE 6666
+EXPOSE 80
 
 CMD ["sh", "start.sh"]
