@@ -26,7 +26,7 @@ class ModifyEventAgent(BaseAgent):
         self.memory_manager = MemoryManager(user.wechat_id)
         self.user = user
 
-    async def modify_event_to_schedule(
+    def modify_event_to_schedule(
         self,
         title: str,
         start_time: str,

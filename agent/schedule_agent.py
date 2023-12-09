@@ -8,7 +8,6 @@ from typing import Tuple
 import logging
 from user.models import User
 from .models import Conversation
-from asgiref.sync import sync_to_async
 import pickle
 
 
@@ -28,28 +27,28 @@ class ScheduleAgent(BaseAgent):
         }
         self.user = user
 
-    async def call_add_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
+    def call_add_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: call_add_event_agent({user_input})"
         )
         planning_agent = AddEventAgent(self.user)
-        return await planning_agent(user_input), True, False
+        return planning_agent(user_input), True, False
 
-    async def call_delete_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
+    def call_delete_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: call_delete_event_agent({user_input})"
         )
         delete_event_agent = DeleteEventAgent(self.user)
-        return await delete_event_agent(user_input), True, False
+        return delete_event_agent(user_input), True, False
 
-    async def call_modify_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
+    def call_modify_event_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: call_modify_event_agent({user_input})"
         )
         modify_event_agent = ModifyEventAgent(self.user)
-        return await modify_event_agent(user_input), True, False
+        return modify_event_agent(user_input), True, False
 
-    async def call_chat_agent(self, user_input: str) -> Tuple[str, bool, bool]:
+    def call_chat_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: call_chat_agent({user_input})"
         )
@@ -59,34 +58,54 @@ class ScheduleAgent(BaseAgent):
             False,
         )
 
-    async def recall_previous_conversation(self, user_input: str) -> Tuple[str, bool, bool]:
+    def recall_previous_conversation(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: recall_previous_conversation({user_input})"
         )
-        conversation = await sync_to_async(
-            (await sync_to_async(
-                Conversation.objects.filter
-            )(wechat_id=self.user.wechat_id)).first
-        )()
+        conversation = Conversation.objects.filter(wechat_id=self.user.wechat_id).first()
         if not conversation:
             return "No previous conversation. You should call new agent.", False, False
         if conversation.type == "AddEventAgent":
             planning_agent = AddEventAgent(self.user)
-            return await planning_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
+            return (
+                planning_agent(
+                    user_input, pickle.loads(conversation.messages)
+                ),
+                True,
+                False,
+            )
         elif conversation.type == "DeleteEventAgent":
             delete_event_agent = DeleteEventAgent(self.user)
-            return await delete_event_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
+            return (
+                delete_event_agent(
+                    user_input, pickle.loads(conversation.messages)
+                ),
+                True,
+                False,
+            )
         elif conversation.type == "ModifyEventAgent":
             modify_event_agent = ModifyEventAgent(self.user)
-            return await modify_event_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
+            return (
+                modify_event_agent(
+                    user_input, pickle.loads(conversation.messages)
+                ),
+                True,
+                False,
+            )
         elif conversation.type == "ChatAgent":
             chat_agent = ChatAgent(self.user)
-            return await chat_agent(user_input, await sync_to_async(pickle.loads)(conversation.messages)), True, False
+            return (
+                chat_agent(
+                    user_input, pickle.loads(conversation.messages)
+                ),
+                True,
+                False,
+            )
         else:
             logging.info(f"😱 {self.__str__()} Unknown conversation type: {conversation.type}")
             return f"Unknown conversation type: {conversation.type}", False, False
 
-    async def __call__(self, user_input: str) -> str:
+    def __call__(self, user_input: str) -> str:
         logging.info(f"😄 {self.__str__()} Called.")
         messages = [
             {
@@ -99,8 +118,8 @@ class ScheduleAgent(BaseAgent):
             },
         ]
         while True:
-            response = await self.chat_completion(messages, self.functions)
-            message, end, _ = await self.handle_ai_response(response)
+            response = self.chat_completion(messages, self.functions)
+            message, end, _ = self.handle_ai_response(response)
             messages.append(response)
             messages.extend(message)
             if end:

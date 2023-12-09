@@ -7,7 +7,6 @@ from utils.utils_logger import get_logger
 from utils.utils_request import request_success
 from agent.views import agent_main
 from user.models import User
-import asyncio
 
 import backoff
 import openai
@@ -93,7 +92,7 @@ def recv_msg(req):
         user.agent_deal = True
         user.save()
 
-        message = asyncio.run(agent_main(body['content'], user))
+        message = agent_main(body['content'], user)
     except Exception as e:
         get_logger().error(e)
 

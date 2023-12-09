@@ -26,7 +26,7 @@ class DeleteEventAgent(BaseAgent):
         self.memory_manager = MemoryManager(user.wechat_id)
         self.user = user
 
-    async def delete_event_to_schedule(
+    def delete_event_to_schedule(
         self, title: str, start_time: str
     ) -> Tuple[str, bool, bool]:
         logging.info(

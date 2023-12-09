@@ -5,7 +5,6 @@ import logging
 from .memory_manager import MemoryManager
 from user.models import User
 from event.models import Event
-from asgiref.sync import sync_to_async
 
 
 class AddEventAgent(BaseAgent):
@@ -27,7 +26,7 @@ class AddEventAgent(BaseAgent):
         self.memory_manager = MemoryManager(user.wechat_id)
         self.user = user
 
-    async def add_event_to_schedule(
+    def add_event_to_schedule(
         self,
         title: str,
         description: str,
@@ -40,7 +39,7 @@ class AddEventAgent(BaseAgent):
             + f"title={title}, description={description}, start_time={start_time}, end_time={end_time}, reminder={reminder})"
         )
 
-        e, response = await sync_to_async(Event.create_event)(
+        e, response = Event.create_event(
             user=self.user,
             time_start={
                 "hour": int(start_time[11:13]),
@@ -50,7 +49,9 @@ class AddEventAgent(BaseAgent):
             time_end={
                 "hour": int(end_time[11:13]),
                 "minute": int(end_time[14:16]),
-            } if end_time else None,
+            }
+            if end_time
+            else None,
             date_end=end_time[:10] if end_time else None,
             title=title,
             description=description,
@@ -58,7 +59,9 @@ class AddEventAgent(BaseAgent):
             reminder={
                 "hour": int(reminder["time"][11:13]),
                 "minute": int(reminder["time"][14:16]),
-            } if reminder else None,
+            }
+            if reminder
+            else None,
         )
         if response:
             return (
@@ -68,11 +71,26 @@ class AddEventAgent(BaseAgent):
             )
         else:
             return (
-                "成功添加日程: " + title + "\n" + "description: " + description + "\n" + "start_time: " + start_time + "\n" + "end_time: " + end_time + "\n" + "reminder time: " + reminder["time"] + "\n" + "reminder type: " + reminder["type"],
+                "成功添加日程: "
+                + title
+                + "\n"
+                + "description: "
+                + description
+                + "\n"
+                + "start_time: "
+                + start_time
+                + "\n"
+                + "end_time: "
+                + end_time
+                + "\n"
+                + "reminder time: "
+                + reminder["time"]
+                + "\n"
+                + "reminder type: "
+                + reminder["type"],
                 True,
                 False,
             )
-
 
     def __str__(self) -> str:
         return "AddEventAgent"
