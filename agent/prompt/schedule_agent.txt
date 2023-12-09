@@ -8,6 +8,7 @@ Agents you can schedule include:
 - AddEventAgent: Add an event to the user's schedule.
 - DeleteEventAgent: Delete an event from the user's schedule.
 - ModifyEventAgent: Modify an event in the user's schedule.
+- OptimizeAgent: Optimize the user's schedule.
 - ChatAgent: Chat with the user.
 
 [Context]
