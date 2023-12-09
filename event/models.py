@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from user.models import User
 from typing import Optional, Dict
 from utils.utils_scheduler import get_scheduler
+from wechat.utils import send_message
 
 
 # Create your models here.
@@ -67,7 +68,7 @@ class Event(models.Model):
         def remind_func(remind_type):
             # TODO: send remind
             if remind_type == 'wechat':
-                pass
+                send_message(self.user, 'text', "❗❗❗" + '\n' + self.title + '\n' + self.description)
             elif remind_type == 'message':
                 pass
             elif remind_type == 'phone_call':
