@@ -4,6 +4,7 @@ from .add_event_agent import AddEventAgent
 from .delete_event_agent import DeleteEventAgent
 from .modify_event_agent import ModifyEventAgent
 from .chat_agent import ChatAgent
+from .optimize_agent import OptimizeAgent
 from typing import Tuple
 import logging
 from user.models import User
@@ -22,6 +23,7 @@ class ScheduleAgent(BaseAgent):
             "call_add_event_agent": self.call_add_event_agent,
             "call_delete_event_agent": self.call_delete_event_agent,
             "call_modify_event_agent": self.call_modify_event_agent,
+            "call_optimize_agent": self.optimize_agent,
             "call_chat_agent": self.call_chat_agent,
             "recall_previous_conversation": self.recall_previous_conversation,
         }
@@ -47,16 +49,20 @@ class ScheduleAgent(BaseAgent):
         )
         modify_event_agent = ModifyEventAgent(self.user)
         return modify_event_agent(user_input), True, False
+    
+    def optimize_agent(self, user_input: str) -> Tuple[str, bool, bool]:
+        logging.info(
+            f"🔧 {self.__str__()} Function Calling: optimize_agent({user_input})"
+        )
+        optimize_agent = OptimizeAgent(self.user)
+        return optimize_agent(user_input), True, False
 
     def call_chat_agent(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
             f"🔧 {self.__str__()} Function Calling: call_chat_agent({user_input})"
         )
-        return (
-            "Hello World! Welcome to contact with us by email: lkm20@mails.tsinghua.edu.cn",
-            True,
-            False,
-        )
+        chat_agent = ChatAgent(self.user)
+        return chat_agent(user_input), True, False
 
     def recall_previous_conversation(self, user_input: str) -> Tuple[str, bool, bool]:
         logging.info(
@@ -101,29 +107,18 @@ class ScheduleAgent(BaseAgent):
                 True,
                 False,
             )
+        elif conversation.type == "OptimizeAgent":
+            optimize_agent = OptimizeAgent(self.user)
+            return (
+                optimize_agent(
+                    user_input, pickle.loads(conversation.messages)
+                ),
+                True,
+                False,
+            )
         else:
             logging.info(f"😱 {self.__str__()} Unknown conversation type: {conversation.type}")
             return f"Unknown conversation type: {conversation.type}", False, False
-
-    def __call__(self, user_input: str) -> str:
-        logging.info(f"😄 {self.__str__()} Called.")
-        messages = [
-            {
-                "role": "system",
-                "content": self.system_prompt,
-            },
-            {
-                "role": "user",
-                "content": user_input,
-            },
-        ]
-        while True:
-            response = self.chat_completion(messages, self.functions)
-            message, end, _ = self.handle_ai_response(response)
-            messages.append(response)
-            messages.extend(message)
-            if end:
-                return message[-1]["content"]
 
     def __str__(self) -> str:
         return "ScheduleAgent"

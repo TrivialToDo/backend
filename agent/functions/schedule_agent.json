@@ -50,14 +50,14 @@
     {
         "type": "function",
         "function": {
-            "name": "recall_previous_conversation",
-            "description": "Recall the previous conversation.",
+            "name": "call_optimize_agent",
+            "description": "Call the OptimizeAgent to optimize user's schedule.",
             "parameters": {
                 "type": "object",
                 "properties": {
                     "user_input": {
                         "type": "string",
-                        "description": "The user input for the recall."
+                        "description": "The user input for the optimize order."
                     }
                 }
             }
@@ -74,6 +74,22 @@
                     "user_input": {
                         "type": "string",
                         "description": "The user input for the chat."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "recall_previous_conversation",
+            "description": "Recall the previous conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "user_input": {
+                        "type": "string",
+                        "description": "The user input for the recall."
                     }
                 }
             }
