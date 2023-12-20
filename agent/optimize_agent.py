@@ -44,18 +44,18 @@ class OptimizeAgent(BaseAgent):
         response = self.chat_completion(messages, max_tokens=2048, type="json_object")
         new_events = json.loads(response, encoding="utf-8")
         num = 0
+        Event.remove_all_events(user=self.user)
         for i in new_events:
-            Event.modify_event(
+            Event.create_event(
                 user=self.user,
-                hash=i['hash'],
-                time_start=i.get('timeStart', None),
-                date_start=i.get('dateStart', None),
-                time_end=i.get('timeEnd', None),
-                date_end=i.get('dateEnd', None),
-                title=i.get('title', None),
-                description=i.get('description', None),
-                repeat=i.get('repeat', None),
-                reminder=i.get('reminder', None),
+                time_start=i.get("timeStart", None),
+                date_start=i.get("dateStart", None),
+                time_end=i.get("timeEnd", None),
+                date_end=i.get("dateEnd", None),
+                title=i.get("title", None),
+                description=i.get("description", None),
+                repeat=i.get("repeat", None),
+                reminder=i.get("reminder", None),
             )
             num += 1
         return num

@@ -290,3 +290,7 @@ class Event(models.Model):
 
         event.save()
         return event, None
+
+    @staticmethod
+    def remove_all_events(user: User):
+        Event.objects.filter(user=user).delete()
