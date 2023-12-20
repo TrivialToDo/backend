@@ -100,7 +100,13 @@ def recv_msg(req):
     user.agent_deal = False
     user.save()
 
-    return request_success({
-        "type": "text",
-        "content": message
-    })
+    if type(message) == str:
+        return request_success({
+            "type": "text",
+            "content": message
+        })
+    elif type(message) == tuple:
+        return request_success({
+            "type": "image",
+            "content": message[0]
+        })

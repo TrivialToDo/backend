@@ -14,3 +14,5 @@ numpy
 backoff
 
 faiss-cpu
+
+matplotlib
