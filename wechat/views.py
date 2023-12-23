@@ -163,6 +163,7 @@ def recv_msg(req):
 
 
 def recv_room_msg(body):
+    global group_msg_buffer
     roomid = body['roomid']
     if roomid in group_msg_buffer.keys():
         group_msg_buffer[roomid].append((body['id'], body['content']))
@@ -170,8 +171,18 @@ def recv_room_msg(body):
         group_msg_buffer[roomid] = []
         group_msg_buffer[roomid].append((body['id'], body['content']))
 
+def process_room_msgs():
+    global group_msg_buffer
+    print("processing room msg")
+    print(len(group_msg_buffer.keys()))
+    for key in group_msg_buffer.keys():
+        msgs = group_msg_buffer[key]
+        process_room_msg(msgs)
+    group_msg_buffer = {}
 
 def process_room_msg(messages: List[Tuple[str, str]]):
+    print("processing room msg")
+    print(messages)
     user_input = ["\"" + message[0] + "\": " + message[1] for message in messages]
     user_input = "\n".join(user_input)
     with open("prompt.txt", "r", encoding="utf-8") as f:
@@ -204,4 +215,3 @@ def process_room_msg(messages: List[Tuple[str, str]]):
         message = planning_agent(user_input)
         # send
         send_message(user, 'text', message)
-    group_msg_buffer = {}

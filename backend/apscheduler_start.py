@@ -4,14 +4,18 @@ from user.models import User
 from utils.utils_logger import get_logger
 from utils.utils_scheduler import get_scheduler
 from event.models import Event
-
+from wechat.views import process_room_msgs
 def my_job():
     logger = get_logger()
-    send_message(User(wechat_id='wxid_s1epg7j4rred22'), 'text', "fuck you")
+    print("Abc")
     logger.info("request wx")
 
 
 scheduler = get_scheduler()
+# job = scheduler.add_job(my_job, timezone='Asia/Shanghai', trigger='interval', seconds=10)
+# get_logger().info(job.id)
+job = scheduler.add_job(process_room_msgs, timezone='Asia/Shanghai', trigger='interval', seconds=300)
+get_logger().info(job.id)
 events = Event.objects.filter(dateEnd__gt=datetime.datetime.now(), repeat__in=['daily', 'weekly', 'monthly']).all()
 events |= Event.objects.filter(dateStart__gt=datetime.datetime.now(), repeat='never').all()
 for event in events:
