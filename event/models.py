@@ -155,28 +155,28 @@ class Event(models.Model):
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid repeat"
+                    "msg": f"invalid repeat: {repeat}"
                 }
             }, status=400)
         if time_end is not None and time_start > time_end:
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid time range"
+                    "msg": f"invalid time range: {time_start} > {time_end}"
                 }
             }, status=400)
         if date_start > date_end:
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid date range"
+                    "msg": f"invalid date range: {date_start} > {date_end}"
                 }
             }, status=400)
-        if reminder is not None and time_start > reminder:
+        if reminder is not None and time_start < reminder:
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid reminder"
+                    "msg": f"invalid reminder: {new_time_start} < {new_reminder}"
                 }
             }, status=400)
 
@@ -221,14 +221,14 @@ class Event(models.Model):
             return None, JsonResponse({
                 "code": 404,
                 "data": {
-                    "msg": "event not found"
+                    "msg": f"event with hash {hash} not found"
                 }
             }, status=404)
         if event.user != user:
             return None, JsonResponse({
                 "code": 403,
                 "data": {
-                    "msg": "permission denied"
+                    "msg": f"event with hash {hash} not belong to user {user.wechat_id}"
                 }
             }, status=403)
 
@@ -242,28 +242,28 @@ class Event(models.Model):
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid repeat"
+                    "msg": f"invalid repeat: {repeat}"
                 }
             }, status=400)
         if new_time_end is not None and new_time_start > new_time_end:
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid time range"
+                    "msg": f"invalid time range: {new_time_start} > {new_time_end}"
                 }
             }, status=400)
         if new_date_start > new_date_end:
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid date range"
+                    "msg": f"invalid date range: {new_date_start} > {new_date_end}"
                 }
             }, status=400)
-        if new_reminder is not None and new_time_start > new_reminder:
+        if new_reminder is not None and new_time_start < new_reminder:
             return None, JsonResponse({
                 "code": 400,
                 "data": {
-                    "msg": "invalid reminder"
+                    "msg": f"invalid reminder: {time_start} < {reminder}"
                 }
             }, status=400)
 
