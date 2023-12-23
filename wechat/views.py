@@ -13,7 +13,7 @@ import openai
 import os
 import base64
 
-from backend.config import config
+from config import config
 
 
 # Create your views here.
