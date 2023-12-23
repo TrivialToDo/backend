@@ -1,5 +1,5 @@
 CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1:5173"]
-
+FRONTEND_URL = ""
 wechat_url = "http://wechat:3000"
 
 # DATABASES = {

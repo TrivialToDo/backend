@@ -13,6 +13,9 @@ import openai
 import os
 import base64
 
+from backend.config import config
+
+
 # Create your views here.
 
 @backoff.on_exception(backoff.expo, Exception, max_time=60)
@@ -69,7 +72,7 @@ def recv_msg(req):
     if type == 'text' and body['content'] == '查日程':
         return request_success({
             "type": "text",
-            "content": user.generate_temp_token()
+            "content": f"{config.FRONTEND_URL}/login?token={user.generate_temp_token()}"
         })
 
     if user.agent_deal:
