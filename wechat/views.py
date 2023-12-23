@@ -7,7 +7,7 @@ from utils.utils_logger import get_logger
 from utils.utils_request import request_success
 from agent.views import agent_main
 from user.models import User
-
+from wechat.utils import send_message
 import backoff
 import openai
 import os
@@ -18,7 +18,10 @@ from config import config
 import backoff
 from typing import List, Dict, Tuple
 
+from agent.add_event_agent import AddEventAgent
+
 # Create your views here.
+group_msg_buffer : Dict[str, List[Tuple[str, str]]] = {}
 
 @backoff.on_exception(backoff.expo, Exception, max_time=60)
 def process_audio(audio_path: str) -> str:
@@ -82,11 +85,28 @@ def chat_completion(
 @require_http_methods(['POST'])
 def recv_msg(req):
     body = json.loads(req.body.decode('utf-8'))
+    type = body['type']
+
     is_room = body['isRoom']
     if is_room:
-        return recv_room_msg(body)
+        if type == 'audio':
+            audio_name = wechat_id
+            audio_path = f'./{audio_name}.mp3'
+            with open(audio_path, 'wb') as f:
+                f.write(base64.b64decode(body['content']))
+            body['content'] = process_audio(audio_path)
+            os.remove(audio_path)
 
-    type = body['type']
+        if type == 'image':
+            body['content'] = process_image(body['content'])
+
+        recv_room_msg(body)
+
+        return request_success({
+            "type": "noreply",
+            "content": ""
+        })
+
     wechat_id = body['id']
     nickname = body['name']
     msg_time = body['date']
@@ -143,7 +163,12 @@ def recv_msg(req):
 
 
 def recv_room_msg(body):
-    pass
+    roomid = body['roomid']
+    if roomid in group_msg_buffer.keys():
+        group_msg_buffer[roomid].append((body['id'], body['content']))
+    else:
+        group_msg_buffer[roomid] = []
+        group_msg_buffer[roomid].append((body['id'], body['content']))
 
 
 def process_room_msg(messages: List[Tuple[str, str]]):
@@ -164,11 +189,19 @@ def process_room_msg(messages: List[Tuple[str, str]]):
     response = chat_completion(request_messages, type="json_object")
     response = json.loads(response, encoding="utf-8")
     if not response["needProcess"]:
-        pass
-        #return xxx     不发送消息
+        return
     process = response["process"]
     for todo in process:
         user_id = todo["userId"]
         user_input = todo["userInput"]
         # 调用 add_event_agent
-    
+        # user
+        user = User.objects.filter(wechat_id=user_id)
+        if len(user) == 0:
+            continue
+        user = user[0]
+        planning_agent = AddEventAgent(user)
+        message = planning_agent(user_input)
+        # send
+        send_message(user, 'text', message)
+    group_msg_buffer = {}
