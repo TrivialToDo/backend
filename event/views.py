@@ -1,3 +1,5 @@
+import json
+
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
 from utils.utils_login import login_check
@@ -36,37 +38,39 @@ def del_event(request, hash: str, user: User = None):
 @login_check
 @require_http_methods(["POST"])
 def new_event(request, user: User = None):
-    event, response = Event.create_event(
+    body = json.loads(request.body.decode('utf-8'))
+    event, err = Event.create_event(
         user=user,
-        time_start=request.POST.get("timeStart"),
-        date_start=request.POST.get("dateStart"),
-        time_end=request.POST.get("timeEnd"),
-        date_end=request.POST.get("dateEnd"),
-        title=request.POST.get("title"),
-        description=request.POST.get("description"),
-        repeat=request.POST.get("repeat"),
-        reminder=request.POST.get("reminder"),
+        time_start=body.get("timeStart"),
+        date_start=body.get("dateStart"),
+        time_end=body.get("timeEnd"),
+        date_end=body.get("dateEnd"),
+        title=body.get("title"),
+        description=body.get("description"),
+        repeat=body.get("repeat"),
+        reminder=body.get("reminder"),
     )
-    if response is not None:
-        return response
+    if err is not None:
+        return err
     return request_success({"hash": event.hash})
 
 
 @login_check
 @require_http_methods(["POST"])
 def modify_event(request, user: User = None):
-    event, response = Event.modify_event(
+    body = json.loads(request.body.decode('utf-8'))
+    event, err = Event.modify_event(
         user=user,
-        hash=request.POST.get("hash"),
-        time_start=request.POST.get("timeStart"),
-        date_start=request.POST.get("dateStart"),
-        time_end=request.POST.get("timeEnd"),
-        date_end=request.POST.get("dateEnd"),
-        title=request.POST.get("title"),
-        description=request.POST.get("description"),
-        repeat=request.POST.get("repeat"),
-        reminder=request.POST.get("reminder"),
+        hash=body.get("hash"),
+        time_start=body.get("timeStart"),
+        date_start=body.get("dateStart"),
+        time_end=body.get("timeEnd"),
+        date_end=body.get("dateEnd"),
+        title=body.get("title"),
+        description=body.get("description"),
+        repeat=body.get("repeat"),
+        reminder=body.get("reminder"),
     )
-    if response is not None:
-        return response
+    if err is not None:
+        return err
     return request_success({"hash": event.hash})

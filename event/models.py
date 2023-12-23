@@ -127,6 +127,8 @@ class Event(models.Model):
             repeat: str = 'never',
             reminder: Optional[Dict[str, int]] = None
     ):
+        if title is None:
+            title = 'Untitled'
         _hash = hashlib.md5(
             (
                     title + ';' +
