@@ -13,6 +13,9 @@ import openai
 import os
 import base64
 
+import backoff
+from typing import List, Dict, Tuple
+
 # Create your views here.
 
 @backoff.on_exception(backoff.expo, Exception, max_time=60)
@@ -53,9 +56,34 @@ def process_image(base64_image) -> str:
     return response.choices[0].message.content
 
 
+@backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
+def chat_completion(
+    messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text"
+) -> Dict[str, str]:
+    response = openai.chat.completions.create(
+        model="gpt-4-1106-preview",
+        messages=messages,
+        tools=functions,
+        tool_choice="auto",
+        max_tokens=max_tokens,
+        temperature=0.05,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0,
+        response_format={
+            "type": type
+        },
+    )
+    return response.choices[0].message
+
+
 @require_http_methods(['POST'])
 def recv_msg(req):
     body = json.loads(req.body.decode('utf-8'))
+    is_room = body['isRoom']
+    if is_room:
+        return recv_room_msg(body)
+
     type = body['type']
     wechat_id = body['id']
     nickname = body['name']
@@ -110,3 +138,35 @@ def recv_msg(req):
             "type": "image",
             "content": message[0]
         })
+
+
+def recv_room_msg(body):
+    pass
+
+
+def process_room_msg(messages: List[Tuple[str, str]]):
+    user_input = ["\"" + message[0] + "\": " + message[1] for message in messages]
+    user_input = "\n".join(user_input)
+    with open("prompt.txt", "r", encoding="utf-8") as f:
+        prompt = f.read()
+    request_messages = [
+        {
+            "role": "system",
+            "content": prompt,
+        },
+        {
+            "role": "user",
+            "content": user_input,
+        }
+    ]
+    response = chat_completion(request_messages, type="json_object")
+    response = json.loads(response, encoding="utf-8")
+    if not response["needProcess"]:
+        pass
+        #return xxx     不发送消息
+    process = response["process"]
+    for todo in process:
+        user_id = todo["userId"]
+        user_input = todo["userInput"]
+        # 调用 add_event_agent
+    

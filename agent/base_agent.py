@@ -30,7 +30,7 @@ class BaseAgent:
 
     @backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
     def chat_completion(
-        self, messages: List[Dict[str, str]], functions: List = [], max_tokens=1024, type="text"
+        self, messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text"
     ) -> Dict[str, str]:
         response = openai.chat.completions.create(
             model="gpt-4-1106-preview",

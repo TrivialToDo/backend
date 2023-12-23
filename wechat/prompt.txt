@@ -1,0 +1,22 @@
+You need to review the chat logs from the past minute in a group chat to determine which users' schedules need to be updated.
+
+=== Group Input Format ===
+
+"UserId": xxxxx
+"UserId": xxxxx
+...
+
+=== Output Format ===
+
+You should only response in json format as follows:
+
+{
+    "needProcess": bool, // means whether some users' schedules need to be updated
+    "process": [
+        {
+            "userId": str,
+            "userInput": str
+        },
+        ...
+    ]
+}
