@@ -41,7 +41,7 @@ class OptimizeAgent(BaseAgent):
                 "content": json.dumps([i.serialize() for i in events], ensure_ascii=False),
             },
         ]
-        response = self.chat_completion(messages, max_tokens=2048, type="json_object")
+        response = self.chat_completion(messages, max_tokens=2048, type="json_object", model="gpt-4-1106-preview")
         new_events = json.loads(response, encoding="utf-8")
         num = 0
         Event.remove_all_events(user=self.user)

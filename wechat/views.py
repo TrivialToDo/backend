@@ -68,7 +68,7 @@ def chat_completion(
         messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text"
 ) -> Dict[str, str]:
     response = openai.chat.completions.create(
-        model="gpt-4-1106-preview",
+        model="gpt-4",
         messages=messages,
         tools=functions,
         tool_choice="auto",
@@ -77,9 +77,9 @@ def chat_completion(
         top_p=1,
         frequency_penalty=0,
         presence_penalty=0,
-        response_format={
-            "type": type
-        },
+        # response_format={
+        #     "type": type
+        # },
     )
     return response.choices[0].message
 

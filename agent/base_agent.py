@@ -30,22 +30,37 @@ class BaseAgent:
 
     @backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
     def chat_completion(
-        self, messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text"
+        self, messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text", model="gpt-4"
     ) -> Dict[str, str]:
-        response = openai.chat.completions.create(
-            model="gpt-4-1106-preview",
-            messages=messages,
-            tools=functions,
-            tool_choice="auto",
-            max_tokens=max_tokens,
-            temperature=0.05,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0,
-            response_format={
-                "type": type
-            },
-        )
+        logging.info(f"🤖 {self.__str__()} Function Calling: chat_completion()")
+        if model=="gpt-4-1106-preview":
+            response = openai.chat.completions.create(
+                model=model,
+                messages=messages,
+                tools=functions,
+                tool_choice="auto",
+                max_tokens=max_tokens,
+                temperature=0.05,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+                response_format={
+                    "type": type
+                },
+            )
+        else:
+            response = openai.chat.completions.create(
+                model=model,
+                messages=messages,
+                tools=functions,
+                tool_choice="auto",
+                max_tokens=max_tokens,
+                temperature=0.05,
+                top_p=1,
+                frequency_penalty=0,
+                presence_penalty=0,
+            )
+        logging.info(f"🤖 {self.__str__()} Function Called.")
         return response.choices[0].message
 
     def handle_ai_response(self, response) -> Tuple[List[Dict[str, str]], bool, bool]:
