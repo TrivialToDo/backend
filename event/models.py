@@ -129,6 +129,9 @@ class Event(models.Model):
     ):
         if title is None:
             title = 'Untitled'
+        if description is None:
+            description = ''
+
         _hash = hashlib.md5(
             (
                     title + ';' +

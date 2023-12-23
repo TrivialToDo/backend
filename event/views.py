@@ -39,16 +39,19 @@ def del_event(request, hash: str, user: User = None):
 @require_http_methods(["POST"])
 def new_event(request, user: User = None):
     body = json.loads(request.body.decode('utf-8'))
+    event = body.get("event")
+    if event is None:
+        return request_fail(400, "event not found")
     event, err = Event.create_event(
         user=user,
-        time_start=body.get("timeStart"),
-        date_start=body.get("dateStart"),
-        time_end=body.get("timeEnd"),
-        date_end=body.get("dateEnd"),
-        title=body.get("title"),
-        description=body.get("description"),
-        repeat=body.get("repeat"),
-        reminder=body.get("reminder"),
+        time_start=event.get("timeStart"),
+        date_start=event.get("dateStart"),
+        time_end=event.get("timeEnd"),
+        date_end=event.get("dateEnd"),
+        title=event.get("title"),
+        description=event.get("description"),
+        repeat=event.get("repeat"),
+        reminder=event.get("reminder"),
     )
     if err is not None:
         return err
@@ -59,17 +62,21 @@ def new_event(request, user: User = None):
 @require_http_methods(["POST"])
 def modify_event(request, user: User = None):
     body = json.loads(request.body.decode('utf-8'))
+    event = body.get("event")
+    hash_ = body.get("hash")
+    if event is None or hash_ is None:
+        return request_fail(400, "event not found")
     event, err = Event.modify_event(
         user=user,
-        hash=body.get("hash"),
-        time_start=body.get("timeStart"),
-        date_start=body.get("dateStart"),
-        time_end=body.get("timeEnd"),
-        date_end=body.get("dateEnd"),
-        title=body.get("title"),
-        description=body.get("description"),
-        repeat=body.get("repeat"),
-        reminder=body.get("reminder"),
+        hash=hash_,
+        time_start=event.get("timeStart"),
+        date_start=event.get("dateStart"),
+        time_end=event.get("timeEnd"),
+        date_end=event.get("dateEnd"),
+        title=event.get("title"),
+        description=event.get("description"),
+        repeat=event.get("repeat"),
+        reminder=event.get("reminder"),
     )
     if err is not None:
         return err
