@@ -21,7 +21,8 @@ from typing import List, Dict, Tuple
 from agent.add_event_agent import AddEventAgent
 
 # Create your views here.
-group_msg_buffer : Dict[str, List[Tuple[str, str]]] = {}
+group_msg_buffer: Dict[str, List[Tuple[str, str]]] = {}
+
 
 @backoff.on_exception(backoff.expo, Exception, max_time=60)
 def process_audio(audio_path: str) -> str:
@@ -33,6 +34,7 @@ def process_audio(audio_path: str) -> str:
         temperature=0
     )
     return message
+
 
 @backoff.on_exception(backoff.expo, Exception, max_time=60)
 def process_image(base64_image) -> str:
@@ -63,7 +65,7 @@ def process_image(base64_image) -> str:
 
 @backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
 def chat_completion(
-    messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text"
+        messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text"
 ) -> Dict[str, str]:
     response = openai.chat.completions.create(
         model="gpt-4-1106-preview",
@@ -85,11 +87,17 @@ def chat_completion(
 @require_http_methods(['POST'])
 def recv_msg(req):
     body = json.loads(req.body.decode('utf-8'))
-    type = body['type']
+    _type = body['type']
+    wechat_id = body['id']
+
+    nickname = body['name']
+    msg_time = body['date']
+    msg_time = datetime.strptime(msg_time, '%Y-%m-%dT%H:%M:%S.%fZ')
+    get_logger().info(msg_time)
 
     is_room = body['isRoom']
     if is_room:
-        if type == 'audio':
+        if _type == 'audio':
             audio_name = wechat_id
             audio_path = f'./{audio_name}.mp3'
             with open(audio_path, 'wb') as f:
@@ -97,7 +105,7 @@ def recv_msg(req):
             body['content'] = process_audio(audio_path)
             os.remove(audio_path)
 
-        if type == 'image':
+        if _type == 'image':
             body['content'] = process_image(body['content'])
 
         recv_room_msg(body)
@@ -107,16 +115,11 @@ def recv_msg(req):
             "content": ""
         })
 
-    wechat_id = body['id']
-    nickname = body['name']
-    msg_time = body['date']
-    msg_time = datetime.strptime(msg_time, '%Y-%m-%dT%H:%M:%S.%fZ')
-    get_logger().info(msg_time)
     user = User.objects.filter(wechat_id=wechat_id).first()
     if user is None:
         user = User.objects.create(wechat_id=wechat_id, nickname=nickname)
 
-    if type == 'text' and body['content'] == '查日程':
+    if _type == 'text' and body['content'] == '查日程':
         return request_success({
             "type": "text",
             "content": f"{config.FRONTEND_URL}/login?token={user.generate_temp_token()}"
@@ -127,8 +130,8 @@ def recv_msg(req):
             "type": "text",
             "content": "get off!"
         })
-    
-    if type == 'audio':
+
+    if _type == 'audio':
         audio_name = wechat_id
         audio_path = f'./{audio_name}.mp3'
         with open(audio_path, 'wb') as f:
@@ -136,7 +139,7 @@ def recv_msg(req):
         body['content'] = process_audio(audio_path)
         os.remove(audio_path)
 
-    if type == 'image':
+    if _type == 'image':
         body['content'] = process_image(body['content'])
 
     try:
@@ -171,6 +174,7 @@ def recv_room_msg(body):
         group_msg_buffer[roomid] = []
         group_msg_buffer[roomid].append((body['id'], body['content']))
 
+
 def process_room_msgs():
     global group_msg_buffer
     print("processing room msg")
@@ -179,6 +183,7 @@ def process_room_msgs():
         msgs = group_msg_buffer[key]
         process_room_msg(msgs)
     group_msg_buffer = {}
+
 
 def process_room_msg(messages: List[Tuple[str, str]]):
     print("processing room msg")
