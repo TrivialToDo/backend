@@ -10,6 +10,7 @@ import logging
 from user.models import User
 from .models import Conversation
 import pickle
+from typing import List, Dict
 
 
 class ScheduleAgent(BaseAgent):
@@ -118,7 +119,69 @@ class ScheduleAgent(BaseAgent):
             )
         else:
             logging.info(f"😱 {self.__str__()} Unknown conversation type: {conversation.type}")
-            return f"Unknown conversation type: {conversation.type}", False, False
+            return f"Unknown conversation type: {conversation.type}", True, False
 
+    def __call__(self, user_input: str, past_messages: List[Dict] | None = None) -> str:
+        logging.info(f"🤓 {self.__str__()} Called.")
+        if not past_messages:
+            messages = [
+                {
+                    "role": "system",
+                    "content": self.system_prompt,
+                },
+                {
+                    "role": "user",
+                    "content": user_input,
+                },
+            ]
+        else:
+            messages = past_messages
+            messages[-1]["content"] = user_input
+
+        conversation = Conversation.objects.filter(wechat_id=self.user.wechat_id).first()
+        if conversation:
+            logging.info("🔆 Recall previous conversations.")
+            message, end, need_save = self.recall_previous_conversation(user_input)
+            if end:
+                past_conversation = Conversation.objects.filter(
+                    wechat_id=self.user.wechat_id
+                )
+                if past_conversation.exists():
+                    past_conversation.delete()
+                if need_save:
+                    logging.info(f"📝 {self.__str__()} Saving conversation...")
+                    binary_messages = pickle.dumps(messages)
+                    new_conversation = Conversation.objects.create(
+                        wechat_id=self.user.wechat_id,
+                        messages=binary_messages,
+                        type=self.__str__(),
+                    )
+                    new_conversation.save()
+                    logging.info(f"✅ 📝 {self.__str__()} Saved conversation.")
+                return message[-1]["content"]
+
+        while True:
+            response = self.chat_completion(messages, self.functions)
+            message, end, need_save = self.handle_ai_response(response)
+            messages.append(response)
+            messages.extend(message)
+            if end:
+                past_conversation = Conversation.objects.filter(
+                    wechat_id=self.user.wechat_id
+                )
+                if past_conversation.exists():
+                    past_conversation.delete()
+                if need_save:
+                    logging.info(f"📝 {self.__str__()} Saving conversation...")
+                    binary_messages = pickle.dumps(messages)
+                    new_conversation = Conversation.objects.create(
+                        wechat_id=self.user.wechat_id,
+                        messages=binary_messages,
+                        type=self.__str__(),
+                    )
+                    new_conversation.save()
+                    logging.info(f"✅ 📝 {self.__str__()} Saved conversation.")
+                return message[-1]["content"]
+    
     def __str__(self) -> str:
         return "ScheduleAgent"

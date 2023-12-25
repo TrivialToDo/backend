@@ -30,10 +30,15 @@ class BaseAgent:
 
     @backoff.on_exception(backoff.constant, Exception, interval=3, max_time=60)
     def chat_completion(
-        self, messages: List[Dict[str, str]], functions: List = [], max_tokens=2048, type="text", model="gpt-4"
+        self,
+        messages: List[Dict[str, str]],
+        functions: List = [],
+        max_tokens=1024,
+        type="text",
+        model="gpt-4",
     ) -> Dict[str, str]:
         logging.info(f"🤖 {self.__str__()} Function Calling: chat_completion()")
-        if model=="gpt-4-1106-preview":
+        if model == "gpt-4-1106-preview":
             response = openai.chat.completions.create(
                 model=model,
                 messages=messages,
@@ -44,9 +49,7 @@ class BaseAgent:
                 top_p=1,
                 frequency_penalty=0,
                 presence_penalty=0,
-                response_format={
-                    "type": type
-                },
+                response_format={"type": type},
             )
         else:
             response = openai.chat.completions.create(
