@@ -8,6 +8,7 @@ import json
 import matplotlib.pyplot as plt
 from event.models import Event
 import base64
+from config import config
 
 
 class ChatAgent(BaseAgent):
@@ -112,7 +113,7 @@ class ChatAgent(BaseAgent):
     def get_web_url(self) -> Tuple[str, bool, bool]:
         logging.info(f"🔧 {self.__str__()} Function Calling: get_web_url()")
         token = self.user.generate_temp_token()
-        return f"todo.yuan.cf/login?token={token}", True, False
+        return f"{config.FRONTEND_URL}/login?token={token}", True, False
 
     def __str__(self) -> str:
         return "ChatAgent"

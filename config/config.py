@@ -25,3 +25,5 @@ DATABASES = {
         'NAME': BASE_DIR / 'database' / 'db.sqlite3'
     }
 }
+
+MAX_TIMEOUT = 50
