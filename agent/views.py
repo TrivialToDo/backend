@@ -4,6 +4,7 @@ import threading
 from config.config import MAX_TIMEOUT
 import ctypes
 import queue
+from utils.utils_logger import get_logger
 
 
 def async_raise(tid, exctype):
@@ -39,11 +40,13 @@ def func_to_run(user_input, user, q):
 
 # Create your views here.
 def agent_main(user_input: str, user: User) -> str:
+    get_logger().info(f"Agent main: {user_input}")
     q = queue.Queue()
     thread = StoppableThread(target=func_to_run, args=(user_input, user, q))
     # return schedule_agent(user_input)
     thread.start()
     thread.join(MAX_TIMEOUT)
+    get_logger().info(f"Agent main: {thread.is_alive()}")
     if thread.is_alive():
         thread.stop()
         raise TimeoutError(f"Timeout after {MAX_TIMEOUT} seconds.")

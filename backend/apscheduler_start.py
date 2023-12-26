@@ -5,6 +5,8 @@ from utils.utils_logger import get_logger
 from utils.utils_scheduler import get_scheduler
 from event.models import Event
 from wechat.views import process_room_msgs
+
+
 def my_job():
     logger = get_logger()
     print("Abc")
@@ -20,7 +22,8 @@ events = Event.objects.filter(dateEnd__gt=datetime.datetime.now(), repeat__in=['
 events |= Event.objects.filter(dateStart__gt=datetime.datetime.now(), repeat='never').all()
 for event in events:
     event.add_schedule_reminder()
-scheduler.start()
+if scheduler.state == 0:
+    scheduler.start()
 
 try:
     import uwsgi

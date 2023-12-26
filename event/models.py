@@ -114,7 +114,8 @@ class Event(models.Model):
                     day=self.dayOfMonth,
                     replace_existing=True
                 )
-        scheduler.start()
+        if scheduler.state == 0:
+            scheduler.start()
 
     @staticmethod
     def create_event(

@@ -112,7 +112,7 @@ class ScheduleAgent(BaseAgent):
 
         # conversation = Conversation.objects.filter(wechat_id=self.user.wechat_id).first()
         conversation = Conversation.get(self.user.wechat_id)
-        if conversation:
+        if conversation and conversation.type != "ChatAgent":
             logging.info("🔆 Recall previous conversations.")
             message, end, need_save = self.recall_previous_conversation(user_input)
             if end:
