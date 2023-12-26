@@ -54,7 +54,7 @@ class MemoryManager:
             logging.warning(f"❌ 🧠 {self.__str__()} Query embedding is empty")
             return []
         _, I = self.index.search(
-            np.array([query_embedding]),
+            np.array([query_embedding]).astype(np.float32),
             k if self.index.ntotal > k else self.index.ntotal,
         )
         logging.info(f"✅ 🧠 {self.__str__()} Search num: {len(I[0])}")
@@ -66,8 +66,8 @@ class MemoryManager:
             logging.warning(f"❌ 🧠 {self.__str__()} Embedding is empty")
             return
         self.memory_text.append(text)
-        self.memory = np.append(self.memory, np.array([embed]), axis=0)
-        self.index.add(np.array([self.memory[-1]]))
+        self.memory = np.append(self.memory, np.array([embed]).astype(np.float32), axis=0)
+        self.index.add(np.array([self.memory[-1]]).astype(np.float32))
         self.save()
         logging.info(
             f"✅ 🧠 {self.__str__()} Add memory, memory size: {self.index.ntotal}"
@@ -84,15 +84,8 @@ class MemoryManager:
         )
 
     def update(self, old_text: str, new_text: str) -> None:
-        embed = self.embedding(new_text)
-        if len(embed) == 0:
-            logging.warning(f"❌ 🧠 {self.__str__()} Embedding is empty")
-            return
-        index = self.memory_text.index(old_text)
-        self.memory_text[index] = new_text
-        self.memory[index] = np.array([embed])
-        self.index.reconstruct(index, np.array([self.memory[index]]))
-        self.save()
+        self.delete(old_text)
+        self.add(new_text)
         logging.info(
             f"✅ 🧠 {self.__str__()} Update memory, memory size: {self.index.ntotal}"
         )
@@ -107,8 +100,6 @@ class MemoryManager:
 
 
 if __name__ == "__main__":
-    memory_manager = MemoryManager("test")
-    # asyncio.run(memory_manager.add("用户一般晚上九点下班。"))
-    # asyncio.run(memory_manager.add("某次用户希望下班后买牙膏，他设置了一个提前10min提醒自己的定时器。"))
-    # asyncio.run(memory_manager.add("用户周三上午有一节课 9:35 下课"))
-    print(memory_manager.search("用户下班时间是几点？"))
+    memory_manager = MemoryManager("@1213hahahasdasdahaha")
+    # memory_manager.update("[moderately]User prefers a soft reminder", "haaaaaaaahaah")
+    print(memory_manager.search("haha"))
