@@ -128,7 +128,7 @@ def recv_msg(req):
     if user.agent_deal:
         return request_success({
             "type": "text",
-            "content": "get off!"
+            "content": "我正在处理您的上一条消息，请稍后重试。如超过 1min 后仍未回复请联系管理员 @KMing_L"
         })
 
     if _type == 'audio':

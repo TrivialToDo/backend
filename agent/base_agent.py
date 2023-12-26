@@ -207,21 +207,14 @@ class BaseAgent:
             messages.append(response)
             messages.extend(message)
             if end:
-                past_conversation = Conversation.objects.filter(
-                    wechat_id=self.user.wechat_id
-                )
-                if past_conversation.exists():
-                    past_conversation.delete()
                 if need_save:
+                    Conversation.delete(self.user.wechat_id)
                     logging.info(f"📝 {self.__str__()} Saving conversation...")
                     binary_messages = pickle.dumps(messages)
-                    new_conversation = Conversation.objects.create(
-                        wechat_id=self.user.wechat_id,
-                        messages=binary_messages,
-                        type=self.__str__(),
-                    )
-                    new_conversation.save()
+                    Conversation.add(self.user.wechat_id, binary_messages, self.__str__())
                     logging.info(f"✅ 📝 {self.__str__()} Saved conversation.")
+                else:
+                    Conversation.delete(self.user.wechat_id)
                 return message[-1]["content"]
 
     @abc.abstractmethod
