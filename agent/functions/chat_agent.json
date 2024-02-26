@@ -1,0 +1,45 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "send_message",
+            "description": "Send message to user.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "message": {
+                        "type": "string",
+                        "description": "The message to send."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "send_schedule",
+            "description": "Send current schedule to user.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date of the Monday of the week to send."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_web_url",
+            "description": "Get the web url of the schedule frontend. User can click on this link to open the schedule in a browser.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    }
+]

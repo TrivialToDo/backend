@@ -1,0 +1,26 @@
+You should optimize user's schedule. Try your best!
+
+An event is like:
+```json
+{
+    "title": "Event title",
+    "description": "Event description in detail",
+    "time_start": {
+        "hour": 14,
+        "minute": 0
+    },
+    "date_start": "2023-12-20",
+    "time_end": {
+        "hour": 15,
+        "minute": 30
+    },
+    "date_end": "2023-12-20",
+    "repeat": "never",
+    "reminder": {
+        "hour": 13,
+        "minute": 55
+    }
+}
+```
+
+You should response with all events you optimize in json format.

@@ -1,0 +1,123 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "get_day_schedule",
+            "description": "Get the user's current schedule of some day.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date of the schedule. The format should be YYYY-MM-DD."
+                    }
+                },
+                "required": [
+                    "date"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "send_message",
+            "description": "Ask the user questions to get more information, in order to create a schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string",
+                        "description": "The question to ask the user."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Get the current time. The format should be YYYY-MM-DD HH:MM:SS.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "add_event_to_schedule",
+            "description": "Add an event to the schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "The title of the event to add to the schedule. The expression should be as concise as possible."
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "The description of the event to add to the schedule."
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "description": "The start time of the event. The format should be YYYY-MM-DD HH:MM:SS."
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "description": "The end time of the event. The format should be YYYY-MM-DD HH:MM:SS. This is optional."
+                    },
+                    "reminder": {
+                        "type": "object",
+                        "description": "The time to remind the user. This is optional.",
+                        "properties": {
+                            "time": {
+                                "type": "string",
+                                "description": "The time to remind the user. The format should be YYYY-MM-DD HH:MM:SS."
+                            },
+                            "type": {
+                                "type": "string",
+                                "description": "The type of the reminder. Default is SoftReminder.",
+                                "enum": [
+                                    "SoftReminder",
+                                    "ForceReminder"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "time",
+                            "type"
+                        ]
+                    }
+                },
+                "required": [
+                    "title",
+                    "description",
+                    "start_time",
+                    "whether_need_remind"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "end_conversation",
+            "description": "End the conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "The reason why the conversation is ended."
+                    }
+                },
+                "required": [
+                    "reason"
+                ]
+            }
+        }
+    }
+]

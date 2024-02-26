@@ -14,9 +14,16 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from django.middleware.csrf import get_token
+
+from utils.utils_request import request_success
+from user.views import login
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('token', lambda req: request_success({"token": get_token(req)})),
+    path('schedule/', include('schedule.urls')),
+    path('event/', include('event.urls')),
+    path('wechat/', include('wechat.urls')),
+    path('login', login),
 ]

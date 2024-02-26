@@ -3,7 +3,7 @@
 *.pot
 *.pyc
 __pycache__
-db.sqlite3
+database/db.sqlite3
 media
 
 # Backup files #
@@ -106,3 +106,10 @@ GitHub.sublime-settings
 
 # Visual Studio Code #
 .vscode/*
+
+.DS_Store
+
+db.sqlite3
+
+agent/memory/*
+!agent/memory/.gitkeep

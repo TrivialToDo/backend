@@ -1,0 +1,86 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "send_message",
+            "description": "Ask the user questions to get more information, in order to optimize the schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string",
+                        "description": "The question to ask the user."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Get the current time. The format should be YYYY-MM-DD HH:MM:SS.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "optimize_day_schedule",
+            "description": "Optimize the user's current schedule of some day.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date of the schedule. The format should be YYYY-MM-DD."
+                    }
+                },
+                "required": [
+                    "date"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "optimize_week_schedule",
+            "description": "Optimize the user's current schedule of some week.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date of the Monday. The format should be YYYY-MM-DD."
+                    }
+                },
+                "required": [
+                    "date"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "end_conversation",
+            "description": "End the conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "The reason why the conversation is ended."
+                    }
+                },
+                "required": [
+                    "reason"
+                ]
+            }
+        }
+    }
+]

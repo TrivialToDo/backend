@@ -1,0 +1,91 @@
+[
+    {
+        "type": "function",
+        "function": {
+            "name": "get_day_schedule",
+            "description": "Get the user's current schedule of some day.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "date": {
+                        "type": "string",
+                        "description": "The date of the schedule. The format should be YYYY-MM-DD."
+                    }
+                },
+                "required": [
+                    "date"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "send_message",
+            "description": "Ask the user questions to get more information, in order to create a schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "question": {
+                        "type": "string",
+                        "description": "The question to ask the user."
+                    }
+                }
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "get_current_time",
+            "description": "Get the current time. The format should be YYYY-MM-DD HH:MM:SS.",
+            "parameters": {
+                "type": "object",
+                "properties": {}
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "delete_event_of_schedule",
+            "description": "Delete an event from the schedule.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "description": "The title of the event to delete from the schedule. The event name should be got by using the get_current_schedule function."
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "description": "The start time of the delete event. The format should be YYYY-MM-DD HH:MM:SS. The start time should be got by using the get_current_schedule function."
+                    }
+                },
+                "required": [
+                    "event",
+                    "start_time"
+                ]
+            }
+        }
+    },
+    {
+        "type": "function",
+        "function": {
+            "name": "end_conversation",
+            "description": "End the conversation.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "reason": {
+                        "type": "string",
+                        "description": "The reason why the conversation is ended."
+                    }
+                },
+                "required": [
+                    "reason"
+                ]
+            }
+        }
+    }
+]

@@ -1,0 +1,1 @@
+You should use function calling to response user's input. Use the same language as user's input.
